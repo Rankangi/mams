@@ -11,9 +11,9 @@ body{
     position:relative;
     overflow-y: hidden;
 }
-form{
-    margin-top: 20%;
-}
+/*form{*/
+/*    margin-top: 20%;*/
+/*}*/
 a{
     text-decoration:none;
     color:#444444;
@@ -50,6 +50,7 @@ a{
 .login-reg-panel #label-login,
 .login-reg-panel #label-register{
     border:1px solid #9E9E9E;
+    color: #444444;
     padding:5px 5px;
     width:150px;
     display:block;
@@ -125,7 +126,7 @@ a{
     border: 1px solid #b5b5b5;
     outline: none;
 }
-.register-show input[type="button"] {
+.register-show input[type="submit"] {
     max-width: 150px;
     width: 100%;
     background: #444444;
@@ -136,6 +137,9 @@ a{
     border-radius: 2px;
     float:right;
     cursor:pointer;
+}
+.register-show input[type="checkbox"] {
+    margin-left: 10px;
 }
 .credit {
     position:absolute;

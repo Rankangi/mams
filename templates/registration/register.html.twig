@@ -2,20 +2,38 @@
 
 {% block title %}Register{% endblock %}
 
+{% block stylesheets %}
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link href="{{ asset('css/login.css') }}" rel="stylesheet">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+{%  endblock %}
+
 {% block body %}
     {% for flashError in app.flashes('verify_email_error') %}
         <div class="alert alert-danger" role="alert">{{ flashError }}</div>
     {% endfor %}
 
-    <h1>Register</h1>
-
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
-
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+    <div class="login-reg-panel">
+        <div class="login-info-box">
+            <h2>Déjà inscrit ?</h2>
+            <p>Connectez-vous à votre compte.</p>
+            <a href="{{ path('app_login') }}" id="label-register">Se connecter</a>
+        </div>
+        <div class="white-panel right-log">
+            <div class="register-show show-log-panel">
+                <h2>S'inscrire</h2>
+                {{ form_start(registrationForm) }}
+                {{ form_row(registrationForm.email, {
+                    attr: {placeholder:"Email"}
+                }) }}
+                {{ form_row(registrationForm.plainPassword, {
+                    attr: {placeholder:"Mot de passe"}
+                }) }}
+                {{ form_row(registrationForm.agreeTerms) }}
+                <input type="submit" value="S'inscrire">
+                {{ form_end(registrationForm) }}
+            </div>
+        </div>
+    </div>
 {% endblock %}
