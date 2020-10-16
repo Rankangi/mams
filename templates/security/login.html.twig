@@ -20,13 +20,6 @@
         </div>
     {% else %}
         <div class="login-reg-panel">
-            <div class="login-info-box">
-                <h2>Déjà inscrit ?</h2>
-                <p>Connectez-vous à votre compte.</p>
-                <label id="label-register" for="log-reg-show">Se connecter</label>
-                <input type="radio" name="active-log-panel" id="log-reg-show"  checked="checked">
-            </div>
-
             <div class="register-info-box">
                 <h2>Nouveau client ?</h2>
                 <p>Créez un compte rapidement et facilement</p>
@@ -36,7 +29,7 @@
             </div>
 
             <div class="white-panel">
-                <div class="login-show">
+                <div class="login-show show-log-panel">
                     <form method="post">
                         <input type="hidden" name="_csrf_token"
                                value="{{ csrf_token('authenticate') }}">
@@ -47,15 +40,7 @@
                     <a href="">Mot de passe oublié ?</a>
                     </form>
                 </div>
-                <div class="register-show">
-                    <h2>S'inscrire</h2>
-                    <input type="text" placeholder="Email">
-                    <input type="password" placeholder="Mot de passe">
-                    <input type="password" placeholder="Confirmer le mot de passe">
-                    <input type="button" value="Register">
-                </div>
             </div>
         </div>
-        <script type="text/javascript" src="{{ asset('js/login.js') }}"></script>
     {% endif %}
 {% endblock %}
