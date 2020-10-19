@@ -4,13 +4,14 @@
 
 {% block stylesheets %}
     <!-- Bootstrap core CSS -->
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="{{ asset('css/shop-item.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
+
     <!-- Page Content -->
     <div class="container">
 
@@ -25,7 +26,24 @@
                         <h3 class="card-title">{{ article.title }}</h3>
                         <p class="card-text">{{ article.content | raw }}</p>
                         <div class="card-footer">
-                            <h4 class="card-price text-right">{{ article.price }} €</h4>
+                            <div class="container">
+                                <div class="row justify-content-around">
+                                    <div class="col-lg-7">
+                                        <label for="amount">Quantité :</label>
+                                        <select id="amount" class="custom-select-sm">
+                                            {% for i in 1..article.amount %}
+                                                <option>{{ i }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <h4 class="card-price text-right">{{ article.price }} €</h4>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center">
+                                    <button class="btn btn-primary btn-block" style="width: 25%">Acheter</button>
+                                </div>
+                            </div>
                         </div>
 {#                        <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>#}
 {#                        4.0 stars#}
@@ -59,7 +77,5 @@
 
     </div>
     <!-- /.container -->
-
-
 {% endblock %}
 
