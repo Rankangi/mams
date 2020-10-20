@@ -8,6 +8,7 @@
 
     <!-- Custom styles for this template -->
     <link href="{{ asset('css/shop-item.css') }}" rel="stylesheet">
+    <script src="https://js.stripe.com/v3/"></script>
 {% endblock %}
 
 {% block body %}
@@ -41,7 +42,7 @@
                                     </div>
                                 </div>
                                 <div class="row justify-content-center">
-                                    <button class="btn btn-primary btn-block" style="width: 25%">Acheter</button>
+                                    <button id="checkout-button" class="btn btn-primary btn-block" style="width: 25%">Acheter</button>
                                 </div>
                             </div>
                         </div>
@@ -77,5 +78,36 @@
 
     </div>
     <!-- /.container -->
+    <script type="text/javascript">
+        // Create an instance of the Stripe object with your publishable API key
+        var stripe = Stripe('pk_test_MNEO6ty8yTmiLUmuaAuprTLS001rO0EvPp');
+        var checkoutButton = document.getElementById('checkout-button');
+
+        checkoutButton.addEventListener('click', function() {
+            // Create a new Checkout Session using the server-side endpoint you
+            // created in step 3.
+            fetch('{{ path('checkout', {'id': article.id }) }}', {
+                method: 'POST',
+            })
+                .then(function(response) {
+                    return response;
+                })
+                .then(function(session) {
+                    console.log(session);
+                    return stripe.redirectToCheckout({ sessionId: session.headers.get('id') });
+                })
+                .then(function(result) {
+                    // If `redirectToCheckout` fails due to a browser or network
+                    // error, you should display the localized error message to your
+                    // customer using `error.message`.
+                    if (result.error) {
+                        alert(result.error.message);
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Error:', error);
+                });
+        });
+    </script>
 {% endblock %}
 
