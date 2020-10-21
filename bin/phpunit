@@ -1,4 +1,4 @@
-#!/usr/bin/env php
+    #!/usr/bin/env php
 <?php
 
 if (!file_exists(dirname(__DIR__).'/vendor/symfony/phpunit-bridge/bin/simple-phpunit.php')) {
