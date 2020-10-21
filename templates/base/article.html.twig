@@ -38,6 +38,7 @@
                                         </select>
                                     </div>
                                     <div class="col-lg-2">
+{#                                        TODO: changer le prix avec la quantité.#}
                                         <h4 class="card-price text-right">{{ article.price }} €</h4>
                                     </div>
                                 </div>
@@ -82,18 +83,19 @@
         // Create an instance of the Stripe object with your publishable API key
         var stripe = Stripe('pk_test_MNEO6ty8yTmiLUmuaAuprTLS001rO0EvPp');
         var checkoutButton = document.getElementById('checkout-button');
-
+        var amountValue = document.getElementById('amount');
         checkoutButton.addEventListener('click', function() {
             // Create a new Checkout Session using the server-side endpoint you
             // created in step 3.
-            fetch('{{ path('checkout', {'id': article.id }) }}', {
+            var url = '{{ path('checkout', {'id': article.id, 'amount': "amount_value" })|escape('js') }}';
+            url = url.replace("amount_value",amountValue.value);
+            fetch(url, {
                 method: 'POST',
             })
                 .then(function(response) {
                     return response;
                 })
                 .then(function(session) {
-                    console.log(session);
                     return stripe.redirectToCheckout({ sessionId: session.headers.get('id') });
                 })
                 .then(function(result) {
