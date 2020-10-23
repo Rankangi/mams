@@ -34,7 +34,7 @@ class ArticleFixtures extends Fixture
                     ->setContent($content)
                     ->setImage("http://placehold.it/700x400")
                     ->setAmount(mt_rand(0,10))
-                    ->setPrice($faker->randomFloat(2,5,30))
+                    ->setPrice(mt_rand(500,5000))
                     ->setCategory($category);
 
                 $manager->persist($article);

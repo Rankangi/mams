@@ -37,7 +37,7 @@ class CheckoutController extends AbstractController
                 'quantity' => $amount,
                 'price_data' => [
                     'currency' => 'eur',
-                    'unit_amount' => $article->getPrice()*100,
+                    'unit_amount' => $article->getPrice(),
                     'product_data' => [
                         'name' => $article->getTitle(),
                         'images' => [$article->getImage()],
