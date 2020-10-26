@@ -57,7 +57,7 @@
                         {% if article.amount != 0 %}
                             <div class="col-lg-4 col-md-6 mb-4">
                                 <div class="card h-100">
-                                    <a href="{{ path('article_show', {'id': article.id}) }}"><img class="card-img-top" src="{{ article.image }}" alt=""></a>
+                                    <a href="{{ path('article_show', {'id': article.id}) }}"><img class="card-img-top" src=" {{asset( 'uploads/images/article/')}}{{ article.image}}" alt=""></a>
                                     <div class="card-body">
                                         <h4 class="card-title">
                                             <a href="{{ path('article_show', {'id': article.id }) }}">{{ article.title }}</a>

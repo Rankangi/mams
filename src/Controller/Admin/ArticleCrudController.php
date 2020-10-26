@@ -4,12 +4,15 @@ namespace App\Controller\Admin;
 
 use App\Entity\Article;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Vich\UploaderBundle\Form\Type\VichFileType;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class ArticleCrudController extends AbstractCrudController
 {
@@ -22,8 +25,9 @@ class ArticleCrudController extends AbstractCrudController
     {
         return [
             TextField::new('title')->setLabel('Titre'),
-            IntegerField::new('category',"Catégorie"),
+            AssociationField::new('category',"Catégorie"),
             TextEditorField::new('description')->hideOnIndex()->setLabel('Description'),
+            TextEditorField::new('content')->hideOnIndex()->setLabel('Contenu'),
             IntegerField::new('amount')->formatValue(function ($value){
                 if ($value <= 5 and $value > 0){
                     return "Attention !!! " . $value;
@@ -33,8 +37,8 @@ class ArticleCrudController extends AbstractCrudController
                     return $value;
                 }
             })->setLabel('Quantité'),
-            // TODO: Problème avec l'image qui est stockée comme un lien.
-//            ImageField::new('image'),
+            ImageField::new('imageFile')->setFormType(VichImageType::class)->hideOnIndex(),
+            ImageField::new('image')->setBasePath($this->getParameter('app.path.article_images'))->hideOnForm(),
             MoneyField::new('price')->setCurrency('EUR')->setLabel('Prix'),
         ];
     }
