@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
 use Stripe\Exception\ApiErrorException;
@@ -20,15 +21,23 @@ class CheckoutController extends AbstractController
      * @param Request $request
      * @return Response
      * @throws ApiErrorException
+     * @IsGranted("ROLE_USER")
      */
     public function index(Article $article, Request $request)
     {
         $amount = $request->query->get('amount');
 
+
+
         Stripe::setApiKey($this->getParameter('stripe_secret_key'));
         $checkout_session = Session::create([
+            'billing_address_collection' => 'required',
+            'shipping_address_collection' => [
+                'allowed_countries' => ['FR']
+            ],
             'allow_promotion_codes' => true,
             'payment_method_types' => ['card'],
+            'customer' => $this->getUser()->getCustomerID(),
             'metadata' => [
                 'quantity' => $amount,
                 'id' => $article->getId(),
@@ -47,7 +56,7 @@ class CheckoutController extends AbstractController
             ]],
             'mode' => 'payment',
             'success_url' => $this->generateUrl('checkout_success',[], UrlGeneratorInterface::ABSOLUTE_URL) . "?session_id={CHECKOUT_SESSION_ID}",
-            'cancel_url' => $this->generateUrl('base',[], UrlGeneratorInterface::ABSOLUTE_URL),
+            'cancel_url' => $this->generateUrl('article_show',['id' => $article->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
         ]);
         $response = new Response();
         $response->headers->set('id', $checkout_session->id);

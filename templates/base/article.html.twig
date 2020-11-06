@@ -96,7 +96,11 @@
                     return response;
                 })
                 .then(function(session) {
-                    return stripe.redirectToCheckout({ sessionId: session.headers.get('id') });
+                    {% if is_granted("ROLE_USER")  %}
+                        return stripe.redirectToCheckout({ sessionId: session.headers.get('id') });
+                    {%  else %}
+                        window.location.href = '{{ path('app_login') }}'
+                    {% endif %}
                 })
                 .then(function(result) {
                     // If `redirectToCheckout` fails due to a browser or network
