@@ -39,6 +39,19 @@ class Commande
      */
     private $statut;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Adresse::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $shippingAddress;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Adresse::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $billingAddress;
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -88,6 +101,30 @@ class Commande
     public function setStatut(string $statut): self
     {
         $this->statut = $statut;
+
+        return $this;
+    }
+
+    public function getShippingAddress(): ?Adresse
+    {
+        return $this->shippingAddress;
+    }
+
+    public function setShippingAddress(?Adresse $shippingAddress): self
+    {
+        $this->shippingAddress = $shippingAddress;
+
+        return $this;
+    }
+
+    public function getBillingAddress(): ?Adresse
+    {
+        return $this->billingAddress;
+    }
+
+    public function setBillingAddress(?Adresse $billingAddress): self
+    {
+        $this->billingAddress = $billingAddress;
 
         return $this;
     }
