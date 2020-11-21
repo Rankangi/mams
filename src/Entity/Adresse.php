@@ -38,15 +38,15 @@ class Adresse
     private $country;
 
     /**
+     * @ORM\Column(type="boolean")
+     */
+    private $first;
+
+    /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="adresses")
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $first;
 
     public function getId(): ?int
     {
@@ -101,18 +101,6 @@ class Adresse
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
     public function getFirst(): ?bool
     {
         return $this->first;
@@ -121,6 +109,18 @@ class Adresse
     public function setFirst(bool $first): self
     {
         $this->first = $first;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

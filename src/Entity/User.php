@@ -63,9 +63,20 @@ class User implements UserInterface
      */
     private $commandes;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Adresse::class, mappedBy="user")
+     */
+    private $adresses;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Adresse::class, cascade={"persist", "remove"})
+     */
+    private $defaultAddress;
+
     public function __construct()
     {
         $this->commandes = new ArrayCollection();
+        $this->adresses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -221,6 +232,49 @@ class User implements UserInterface
                 $commande->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Adresse[]
+     */
+    public function getAdresses(): Collection
+    {
+        return $this->adresses;
+    }
+
+    public function addAdress(Adresse $adress): self
+    {
+        if (!$this->adresses->contains($adress)) {
+            $this->adresses[] = $adress;
+            $adress->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAdress(Adresse $adress): self
+    {
+        if ($this->adresses->contains($adress)) {
+            $this->adresses->removeElement($adress);
+            // set the owning side to null (unless already changed)
+            if ($adress->getUser() === $this) {
+                $adress->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getDefaultAddress(): ?Adresse
+    {
+        return $this->defaultAddress;
+    }
+
+    public function setDefaultAddress(?Adresse $defaultAddress): self
+    {
+        $this->defaultAddress = $defaultAddress;
 
         return $this;
     }

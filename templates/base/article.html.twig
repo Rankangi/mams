@@ -38,7 +38,7 @@
                                         </select>
                                     </div>
                                     <div class="col-lg-2">
-{#                                        TODO: changer le prix avec la quantité.#}
+                                        {#                                        TODO: changer le prix avec la quantité.#}
                                         <h4 class="card-price text-right">{{ article.price/100 }} €</h4>
                                     </div>
                                 </div>
@@ -47,29 +47,29 @@
                                 </div>
                             </div>
                         </div>
-{#                        <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>#}
-{#                        4.0 stars#}
+                        {#                        <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>#}
+                        {#                        4.0 stars#}
                     </div>
                 </div>
                 <!-- /.card -->
 
-{#                <div class="card card-outline-secondary my-4">#}
-{#                    <div class="card-header">#}
-{#                        Product Reviews#}
-{#                    </div>#}
-{#                    <div class="card-body">#}
-{#                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>#}
-{#                        <small class="text-muted">Posted by Anonymous on 3/1/17</small>#}
-{#                        <hr>#}
-{#                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>#}
-{#                        <small class="text-muted">Posted by Anonymous on 3/1/17</small>#}
-{#                        <hr>#}
-{#                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>#}
-{#                        <small class="text-muted">Posted by Anonymous on 3/1/17</small>#}
-{#                        <hr>#}
-{#                        <a href="#" class="btn btn-success">Leave a Review</a>#}
-{#                    </div>#}
-{#                </div>#}
+                {#                <div class="card card-outline-secondary my-4">#}
+                {#                    <div class="card-header">#}
+                {#                        Product Reviews#}
+                {#                    </div>#}
+                {#                    <div class="card-body">#}
+                {#                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>#}
+                {#                        <small class="text-muted">Posted by Anonymous on 3/1/17</small>#}
+                {#                        <hr>#}
+                {#                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>#}
+                {#                        <small class="text-muted">Posted by Anonymous on 3/1/17</small>#}
+                {#                        <hr>#}
+                {#                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>#}
+                {#                        <small class="text-muted">Posted by Anonymous on 3/1/17</small>#}
+                {#                        <hr>#}
+                {#                        <a href="#" class="btn btn-success">Leave a Review</a>#}
+                {#                    </div>#}
+                {#                </div>#}
                 <!-- /.card -->
 
             </div>
@@ -97,9 +97,9 @@
                 })
                 .then(function(session) {
                     {% if is_granted("ROLE_USER")  %}
-                        return stripe.redirectToCheckout({ sessionId: session.headers.get('id') });
+                    return stripe.redirectToCheckout({ sessionId: session.headers.get('id') });
                     {%  else %}
-                        window.location.href = '{{ path('app_login') }}'
+                    window.location.href = '{{ path('app_login') }}'
                     {% endif %}
                 })
                 .then(function(result) {
