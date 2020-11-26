@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Article;
 use App\Entity\Category;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
@@ -35,7 +36,8 @@ class ArticleFixtures extends Fixture
                     ->setImage("http://placehold.it/700x400")
                     ->setAmount(mt_rand(0,10))
                     ->setPrice(mt_rand(500,5000))
-                    ->setCategory($category);
+                    ->setCategory($category)
+                    ->setUpdateAt(new \DateTime());
 
                 $manager->persist($article);
             }
