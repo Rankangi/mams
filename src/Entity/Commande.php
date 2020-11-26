@@ -41,15 +41,20 @@ class Commande
 
     /**
      * @ORM\ManyToOne(targetEntity=Adresse::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $shippingAddress;
 
     /**
      * @ORM\ManyToOne(targetEntity=Adresse::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $billingAddress;
+
+    /**
+     * @ORM\Column(type="string", length=64)
+     */
+    private $sessionId;
 
 
     public function getId(): ?int
@@ -125,6 +130,18 @@ class Commande
     public function setBillingAddress(?Adresse $billingAddress): self
     {
         $this->billingAddress = $billingAddress;
+
+        return $this;
+    }
+
+    public function getSessionId(): ?string
+    {
+        return $this->sessionId;
+    }
+
+    public function setSessionId(string $sessionId): self
+    {
+        $this->sessionId = $sessionId;
 
         return $this;
     }
