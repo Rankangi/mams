@@ -30,7 +30,8 @@
                 </div>
             </div>
         </div>
-        {{ form_start(form) }}
+        {{ form_start(shippingForm) }}
+        {{ form_start(billingForm) }}
         <div class="row cart-body">
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 col-md-push-6 col-sm-push-6">
                     <!--REVIEW ORDER-->
@@ -41,21 +42,21 @@
                         <div class="panel-body">
                             <div class="form-group">
                                 <div class="col-sm-3 col-xs-3">
-                                    <img class="img-responsive" src="{{asset( 'uploads/images/article/')}}{{ article.image}}" />
+                                    <img class="img-responsive" src="{{asset( 'uploads/images/article/')}}{{ commande.article.image}}" />
                                 </div>
                                 <div class="col-sm-6 col-xs-6">
-                                    <div class="col-xs-12">{{ article.title }}</div>
-                                    <div class="col-xs-12"><small>Quantité:<span>{{ article.amount }}</span></small></div>
+                                    <div class="col-xs-12">{{ commande.article.title }}</div>
+                                    <div class="col-xs-12"><small>Quantité:<span>{{ commande.article.amount }}</span></small></div>
                                 </div>
                                 <div class="col-sm-3 col-xs-3 text-right">
-                                    <h6>{{ article.price/100 }}<span> €</span></h6>
+                                    <h6>{{ commande.article.price/100 }}<span> €</span></h6>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-12">
                                     <hr>
                                     <strong>Sous-total</strong>
-                                    <div class="pull-right"><span>{{ article.price/100 }}</span><span> €</span></div>
+                                    <div class="pull-right"><span>{{ commande.article.price/100 }}</span><span> €</span></div>
                                 </div>
                                 <div class="col-xs-12">
                                     <small>Livraison</small>
@@ -66,7 +67,7 @@
                                 <div class="col-xs-12">
                                     <hr>
                                     <strong>Total</strong>
-                                    <div class="pull-right"><span>{{ article.price/100 }}</span><span> €</span></div>
+                                    <div class="pull-right"><span>{{ commande.article.price/100 }}</span><span> €</span></div>
                                 </div>
                             </div>
                         </div>
@@ -83,45 +84,6 @@
                                 <div class="col-md-12"><input type="text" name="email_address" class="form-control" disabled="false" value="{{ app.user.email }}" /></div>
                             </div>
                             <div class="form-group">
-                                <div class="col-md-12">
-                                    <h4>Adresse de livraison</h4>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-6 col-xs-12">
-                                    <strong>Nom:</strong>
-                                    {{ form_widget(form.firstName, {'attr': {'disabled': 'false'}}) }}
-                                </div>
-                                <div class="span1"></div>
-                                <div class="col-md-6 col-xs-12">
-                                    <strong>Prénom:</strong>
-                                    {{ form_widget(form.lastName, {'attr': {'disabled': 'false'}}) }}
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-12"><strong>Adresse:</strong></div>
-                                <div class="col-md-12">
-                                    {{ form_widget(form.street, {'attr': {'disabled': 'false'}}) }}
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-12"><strong>Ville:</strong></div>
-                                <div class="col-md-12">
-                                    {{ form_widget(form.city, {'attr': {'disabled': 'false'}}) }}
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-6 col-xs-12">
-                                    <strong>Pays:</strong>
-                                    {{ form_widget(form.country, {'attr': {'disabled': 'false'}}) }}
-                                </div>
-                                <div class="span1"></div>
-                                <div class="col-md-6 col-xs-12">
-                                    <strong>Code Postale:</strong>
-                                    {{ form_widget(form.codePostal, {'attr': {'disabled': 'false'}}) }}
-                                </div>
-                            </div>
-                            <div class="form-group">
                                 <div class="col-md-12"><strong>Téléphone:</strong></div>
                                 <div class="col-md-12"><input type="text" name="phone_number" class="form-control" value="{{ app.user.number }}" /></div>
                             </div>
@@ -130,12 +92,86 @@
                                     <h4>Adresse de livraison</h4>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <div class="col-md-6 col-xs-12">
+                                    <strong>Nom:</strong>
+                                    {{ form_widget(shippingForm.firstName, {'attr': {'disabled': 'false'}}) }}
+                                </div>
+                                <div class="span1"></div>
+                                <div class="col-md-6 col-xs-12">
+                                    <strong>Prénom:</strong>
+                                    {{ form_widget(shippingForm.lastName, {'attr': {'disabled': 'false'}}) }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Adresse:</strong></div>
+                                <div class="col-md-12">
+                                    {{ form_widget(shippingForm.street, {'attr': {'disabled': 'false'}}) }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Ville:</strong></div>
+                                <div class="col-md-12">
+                                    {{ form_widget(shippingForm.city, {'attr': {'disabled': 'false'}}) }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-6 col-xs-12">
+                                    <strong>Pays:</strong>
+                                    {{ form_widget(shippingForm.country, {'attr': {'disabled': 'false'}}) }}
+                                </div>
+                                <div class="span1"></div>
+                                <div class="col-md-6 col-xs-12">
+                                    <strong>Code Postale:</strong>
+                                    {{ form_widget(shippingForm.codePostal, {'attr': {'disabled': 'false'}}) }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <h4>Adresse de facturation</h4>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-6 col-xs-12">
+                                    <strong>Nom:</strong>
+                                    {{ form_widget(billingForm.firstName, {'attr': {'disabled': 'false'}}) }}
+                                </div>
+                                <div class="span1"></div>
+                                <div class="col-md-6 col-xs-12">
+                                    <strong>Prénom:</strong>
+                                    {{ form_widget(billingForm.lastName, {'attr': {'disabled': 'false'}}) }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Adresse:</strong></div>
+                                <div class="col-md-12">
+                                    {{ form_widget(billingForm.street, {'attr': {'disabled': 'false'}}) }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Ville:</strong></div>
+                                <div class="col-md-12">
+                                    {{ form_widget(billingForm.city, {'attr': {'disabled': 'false'}}) }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-6 col-xs-12">
+                                    <strong>Pays:</strong>
+                                    {{ form_widget(billingForm.country, {'attr': {'disabled': 'false'}}) }}
+                                </div>
+                                <div class="span1"></div>
+                                <div class="col-md-6 col-xs-12">
+                                    <strong>Code Postale:</strong>
+                                    {{ form_widget(billingForm.codePostal, {'attr': {'disabled': 'false'}}) }}
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <!--SHIPPING METHOD END-->
                 </div>
         </div>
-        {{ form_end(form) }}
+        {{ form_end(billingForm, {'render_rest': false}) }}
+        {{ form_end(shippingForm, {'render_rest': false}) }}
         <div class="row cart-footer">
 
         </div>
