@@ -7,7 +7,6 @@ use App\Entity\Article;
 use App\Entity\Commande;
 use App\Entity\User;
 use App\Form\AdresseType;
-use BackupManager\Manager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
@@ -21,16 +20,16 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class CheckoutController extends AbstractController
 {
     /**
-     * @Route("/checkout/{id<\d+>}", name="checkout")
-     * @param Article $article
+     * @Route("/aled/{sessionId}", name="checkout")
+     * @param string $sessionId
      * @param Request $request
      * @return Response
      * @throws ApiErrorException
      * @IsGranted("ROLE_USER")
      */
-    public function index(Article $article, Request $request)
+    public function index(string $sessionId, Request $request)
     {
-        $amount = $request->query->get('amount');
+        $commande = $this->getDoctrine()->getRepository(Commande::class)->findOneBy(['sessionId' => $sessionId]);
 
 
 
@@ -44,24 +43,24 @@ class CheckoutController extends AbstractController
             'payment_method_types' => ['card'],
             'customer' => $this->getUser()->getCustomerID(),
             'metadata' => [
-                'quantity' => $amount,
-                'id' => $article->getId(),
+                'quantity' => $commande->getAmount(),
+                'id' => $commande->getArticle(),
             ],
             'line_items' => [[
-                'quantity' => $amount,
+                'quantity' => $commande->getAmount(),
                 'price_data' => [
                     'currency' => 'eur',
-                    'unit_amount' => $article->getPrice(),
+                    'unit_amount' => $commande->getArticle()->getPrice(),
                     'product_data' => [
-                        'name' => $article->getTitle(),
-                        'images' => [$article->getImage()],
-                        'description' => $article->getDescription(),
+                        'name' => $commande->getArticle()->getTitle(),
+                        'images' => [$commande->getArticle()->getImage()],
+                        'description' => $commande->getArticle()->getDescription(),
                     ],
                 ],
             ]],
             'mode' => 'payment',
             'success_url' => $this->generateUrl('checkout_success',[], UrlGeneratorInterface::ABSOLUTE_URL) . "?session_id={CHECKOUT_SESSION_ID}",
-            'cancel_url' => $this->generateUrl('article_show',['id' => $article->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
+            'cancel_url' => $this->generateUrl('article_show',['id' => $commande->getArticle()->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
         ]);
         $response = new Response();
         $response->headers->set('id', $checkout_session->id);
@@ -104,8 +103,6 @@ class CheckoutController extends AbstractController
      * @return Response
      */
     public function getBillingAdresse(Request $request, string $sessionId){
-        dump($sessionId);
-
         $billingAdresse = new Adresse();
 
         $billingForm = $this->createForm(AdresseType::class, $billingAdresse);
