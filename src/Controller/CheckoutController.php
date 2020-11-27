@@ -35,16 +35,12 @@ class CheckoutController extends AbstractController
 
         Stripe::setApiKey($this->getParameter('stripe_secret_key'));
         $checkout_session = Session::create([
-            'billing_address_collection' => 'required',
-            'shipping_address_collection' => [
-                'allowed_countries' => ['FR']
-            ],
             'allow_promotion_codes' => true,
             'payment_method_types' => ['card'],
             'customer' => $this->getUser()->getCustomerID(),
             'metadata' => [
                 'quantity' => $commande->getAmount(),
-                'id' => $commande->getArticle(),
+                'id' => $commande->getArticle()->getId(),
             ],
             'line_items' => [[
                 'quantity' => $commande->getAmount(),
