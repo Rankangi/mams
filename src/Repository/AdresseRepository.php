@@ -19,6 +19,22 @@ class AdresseRepository extends ServiceEntityRepository
         parent::__construct($registry, Adresse::class);
     }
 
+    public function findByAdresse(Adresse $adresse){
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.city =:city')
+            ->setParameter('city', $adresse->getCity())
+            ->andWhere('a.codePostal =:code')
+            ->setParameter('code', $adresse->getCodePostal())
+            ->andWhere('a.country =:country')
+            ->setParameter('country', $adresse->getCountry())
+            ->andWhere('a.user =:user')
+            ->setParameter('user', $adresse->getUser())
+            ->andWhere('a.street =:street')
+            ->setParameter('street', $adresse->getStreet())
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     // /**
     //  * @return Adresse[] Returns an array of Adresse objects
     //  */

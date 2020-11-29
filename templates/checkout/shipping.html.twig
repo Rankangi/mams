@@ -36,7 +36,8 @@
                                                 {% if shipping %}
                                                     <a class="dropdown-item" href="{{ path('getShippingAdresse',{'street': adresse.street, 'sessionId': form.children["sessionId"].vars["value"]}) }}">{{ adresse.street }}</a>
                                                 {% else %}
-                                                    <a class="dropdown-item" href="#">{{ adresse.street }}</a>
+                                                    <a class="dropdown-item" href="{{ path('getBillingAdresse',{'street': adresse.street, 'sessionId': form.children["sessionId"].vars["value"]}) }}">{{ adresse.street }}</a>
+
                                                 {% endif %}
                                             {% endfor %}
                                         </div>

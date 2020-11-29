@@ -101,20 +101,39 @@ class CheckoutController extends AbstractController
      */
     public function getBillingAdresse(Request $request, string $sessionId){
         $billingAdresse = new Adresse();
+        $street = $request->query->get('street');
 
         $billingForm = $this->createForm(AdresseType::class, $billingAdresse);
         $billingForm->handleRequest($request);
+
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $this->getUser()->getUsername()]);
+
         if ($billingForm->isSubmitted() && $billingForm->isValid()){
-            $billingAdresse = $billingForm->getData();
-            $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $this->getUser()->getUsername()]);
+            $adresse = $billingForm->getData();
             $commande = $this->getDoctrine()->getRepository(Commande::class)->findOneBy(['sessionId' => $billingForm->get('sessionId')->getData()]);
-            $billingAdresse->setUser($user);
+            $adresse->setUser($user);
+            $billingAdresse = $this->getDoctrine()->getRepository(Adresse::class)->findByAdresse($adresse);
+            if ($billingAdresse == null){
+                $billingAdresse = $adresse;
+                $this->getDoctrine()->getManager()->persist($billingAdresse);
+            }
             $commande->setBillingAddress($billingAdresse);
-            $this->getDoctrine()->getManager()->persist($billingAdresse);
             $this->getDoctrine()->getManager()->persist($commande);
             $this->getDoctrine()->getManager()->flush();
             $shippingForm = $this->createForm(AdresseType::class, $commande->getShippingAddress());
             return $this->render("checkout/confirm.html.twig", ['shippingForm' => $shippingForm->createView(), 'billingForm' => $billingForm->createView(), 'commande' => $commande]);
+        }
+        else if($street != null){
+            foreach ($user->getAdresses() as $adresse){
+                if ($adresse->getStreet() == $street){
+                    $billingForm->get('street')->setData($adresse->getStreet());
+                    $billingForm->get('city')->setData($adresse->getCity());
+                    $billingForm->get('codePostal')->setData($adresse->getCodePostal());
+                    $billingForm->get('country')->setData($adresse->getCountry());
+                    $billingForm->get('firstName')->setData($adresse->getFirstName());
+                    $billingForm->get('lastName')->setData($adresse->getLastName());
+                }
+            }
         }
         $billingForm->get('sessionId')->setData($sessionId);
 
@@ -134,7 +153,6 @@ class CheckoutController extends AbstractController
         $amount = $request->query->get('amount');
         $id = $request->query->get('id');
         $street = $request->query->get('street');
-        dump($street);
 
         $shippingForm = $this->createForm(AdresseType::class, $shippingAdresse);
 
@@ -143,9 +161,13 @@ class CheckoutController extends AbstractController
         $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $this->getUser()->getUsername()]);
 
         if ($shippingForm->isSubmitted() && $shippingForm->isValid()){
-            $shippingAdresse = $shippingForm->getData();
-            $shippingAdresse->setUser($user);
-            $manager->persist($shippingAdresse);
+            $adresse = $shippingForm->getData();
+            $adresse->setUser($user);
+            $shippingAdresse = $this->getDoctrine()->getRepository(Adresse::class)->findByAdresse($adresse);
+            if ($shippingAdresse == null){
+                $shippingAdresse = $adresse;
+                $manager->persist($shippingAdresse);
+            }
             $commande = $this->getDoctrine()->getRepository(Commande::class)->findOneBy(['sessionId' => $shippingForm->get('sessionId')->getData()]);
             $commande->setShippingAddress($shippingAdresse);
 
@@ -190,7 +212,6 @@ class CheckoutController extends AbstractController
                 $manager->persist($commande);
                 $manager->flush();
             }
-//            dump($shippingForm->createView()->children["sessionId"]->vars["value"]);
             return $this->render('checkout/shipping.html.twig', ['form' => $shippingForm->createView(), "shipping" => true]);
         }
     }
