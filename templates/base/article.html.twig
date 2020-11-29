@@ -3,9 +3,6 @@
 {% block title %}{{ article.title }}{% endblock %}
 
 {% block stylesheets %}
-    <!-- Bootstrap core CSS -->
-    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
-
     <!-- Custom styles for this template -->
     <link href="{{ asset('css/shop-item.css') }}" rel="stylesheet">
 {% endblock %}
@@ -89,42 +86,5 @@
             return false;
         })
     </script>
-
-{#    <script type="text/javascript">#}
-{#        // Create an instance of the Stripe object with your publishable API key#}
-{#        var stripe = Stripe('pk_test_MNEO6ty8yTmiLUmuaAuprTLS001rO0EvPp');#}
-{#        var checkoutButton = document.getElementById('checkout-button');#}
-{#        var amountValue = document.getElementById('amount');#}
-{#        checkoutButton.addEventListener('click', function() {#}
-{#            // Create a new Checkout Session using the server-side endpoint you#}
-{#            // created in step 3.#}
-{#            var url = '{{ path('checkout', {'id': article.id, 'amount': "amount_value" })|escape('js') }}';#}
-{#            url = url.replace("amount_value",amountValue.value);#}
-{#            fetch(url, {#}
-{#                method: 'POST',#}
-{#            })#}
-{#                .then(function(response) {#}
-{#                    return response;#}
-{#                })#}
-{#                .then(function(session) {#}
-{#                    {% if is_granted("ROLE_USER")  %}#}
-{#                    return stripe.redirectToCheckout({ sessionId: session.headers.get('id') });#}
-{#                    {%  else %}#}
-{#                    window.location.href = '{{ path('app_login') }}'#}
-{#                    {% endif %}#}
-{#                })#}
-{#                .then(function(result) {#}
-{#                    // If `redirectToCheckout` fails due to a browser or network#}
-{#                    // error, you should display the localized error message to your#}
-{#                    // customer using `error.message`.#}
-{#                    if (result.error) {#}
-{#                        alert(result.error.message);#}
-{#                    }#}
-{#                })#}
-{#                .catch(function(error) {#}
-{#                    console.error('Error:', error);#}
-{#                });#}
-{#        });#}
-{#    </script>#}
 {% endblock %}
 

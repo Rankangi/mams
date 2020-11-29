@@ -7,6 +7,7 @@ use App\Entity\Article;
 use App\Entity\Commande;
 use App\Entity\User;
 use App\Form\AdresseType;
+use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
@@ -121,26 +122,28 @@ class CheckoutController extends AbstractController
     }
 
     /**
-     * @Route("/checkout/{id}/shipping", name="getShippingAdresse")
-     * @param Article $article
+     * @Route("/checkout/shipping", name="getShippingAdresse")
      * @param Request $request
      * @return Response
+     * @throws Exception
      * @IsGranted("ROLE_USER")
-     * @throws \Exception
      */
-    public function getShippingAdresse(Article $article, Request $request){
+    public function getShippingAdresse(Request $request){
 
         $shippingAdresse = new Adresse();
         $amount = $request->query->get('amount');
+        $id = $request->query->get('id');
+        $street = $request->query->get('street');
+        dump($street);
 
         $shippingForm = $this->createForm(AdresseType::class, $shippingAdresse);
 
         $shippingForm->handleRequest($request);
         $manager = $this->getDoctrine()->getManager();
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $this->getUser()->getUsername()]);
 
         if ($shippingForm->isSubmitted() && $shippingForm->isValid()){
             $shippingAdresse = $shippingForm->getData();
-            $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $this->getUser()->getUsername()]);
             $shippingAdresse->setUser($user);
             $manager->persist($shippingAdresse);
             $commande = $this->getDoctrine()->getRepository(Commande::class)->findOneBy(['sessionId' => $shippingForm->get('sessionId')->getData()]);
@@ -159,7 +162,23 @@ class CheckoutController extends AbstractController
                 return $this->render('checkout/confirm.html.twig', ['shippingForm' => $shippingForm->createView(), 'billingForm' => $shippingForm->createView(), 'commande' => $commande]);
             }
         } else {
-            if ($shippingForm->get('sessionId')->getData() == null){
+            if ($street != null){
+                foreach ($user->getAdresses() as $adresse){
+                    if ($adresse->getStreet() == $street){
+                        $sessionId = $request->query->get('sessionId');
+                        $shippingForm->get('street')->setData($adresse->getStreet());
+                        $shippingForm->get('city')->setData($adresse->getCity());
+                        $shippingForm->get('codePostal')->setData($adresse->getCodePostal());
+                        $shippingForm->get('country')->setData($adresse->getCountry());
+                        $shippingForm->get('firstName')->setData($adresse->getFirstName());
+                        $shippingForm->get('lastName')->setData($adresse->getLastName());
+                        $shippingForm->get('sessionId')->setData($sessionId);
+                    }
+                }
+
+            }
+            else if ($shippingForm->get('sessionId')->getData() == null){
+                $article = $this->getDoctrine()->getRepository(Article::class)->find($id);
                 $commande = new Commande();
                 $commande->setAmount($amount);
                 $commande->setArticle($article);
@@ -171,7 +190,7 @@ class CheckoutController extends AbstractController
                 $manager->persist($commande);
                 $manager->flush();
             }
-
+//            dump($shippingForm->createView()->children["sessionId"]->vars["value"]);
             return $this->render('checkout/shipping.html.twig', ['form' => $shippingForm->createView(), "shipping" => true]);
         }
     }

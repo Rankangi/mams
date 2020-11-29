@@ -41,6 +41,9 @@
         </nav>
         {% block body %}
         {% endblock %}
-        {% block javascripts %}{% endblock %}
+        {% block javascripts %}
+            <script src="{{ asset('js/jquery.min.js') }}"></script>
+            <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+        {% endblock %}
     </body>
 </html>

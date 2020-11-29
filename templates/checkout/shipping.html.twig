@@ -24,11 +24,23 @@
                         <div class="card-title">
                             <ul class="card-toolbar">
                                 <li class="float-left">
-                                    <h4 style="font-family:Poppins, sans-serif"><i class="fa fa-map-marker"></i> Address</h4>
+                                    <h4 style="font-family:Poppins, sans-serif"><i class="fa fa-map-marker"></i> Adresses</h4>
                                 </li>
                                 <li class="float-right">
-                                    <button type="button" class="btn btn-default" id="btnHelp"><span class="fa fa-question-circle"></span> </button>
-                                    <button type="button" class="btn btn-primary" id="btnAttachent"><span class="fa fa-paperclip"></span> Attachment </button>
+                                    <div class="dropdown">
+                                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Mes adresses
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            {% for adresse in app.user.adresses %}
+                                                {% if shipping %}
+                                                    <a class="dropdown-item" href="{{ path('getShippingAdresse',{'street': adresse.street, 'sessionId': form.children["sessionId"].vars["value"]}) }}">{{ adresse.street }}</a>
+                                                {% else %}
+                                                    <a class="dropdown-item" href="#">{{ adresse.street }}</a>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
