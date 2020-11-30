@@ -135,6 +135,15 @@ class CheckoutController extends AbstractController
                 }
             }
         }
+        else if ($user->getDefaultAddress() != null){
+            $userAdresse = $user->getDefaultAddress();
+            $billingForm->get('street')->setData($userAdresse->getStreet());
+            $billingForm->get('city')->setData($userAdresse->getCity());
+            $billingForm->get('codePostal')->setData($userAdresse->getCodePostal());
+            $billingForm->get('country')->setData($userAdresse->getCountry());
+            $billingForm->get('firstName')->setData($userAdresse->getFirstName());
+            $billingForm->get('lastName')->setData($userAdresse->getLastName());
+        }
         $billingForm->get('sessionId')->setData($sessionId);
 
         return $this->render('checkout/shipping.html.twig', ['form' => $billingForm->createView(), "shipping" => false]);
@@ -200,6 +209,15 @@ class CheckoutController extends AbstractController
 
             }
             else if ($shippingForm->get('sessionId')->getData() == null){
+                if ($user->getDefaultAddress() != null){
+                    $userAdresse = $user->getDefaultAddress();
+                    $shippingForm->get('street')->setData($userAdresse->getStreet());
+                    $shippingForm->get('city')->setData($userAdresse->getCity());
+                    $shippingForm->get('codePostal')->setData($userAdresse->getCodePostal());
+                    $shippingForm->get('country')->setData($userAdresse->getCountry());
+                    $shippingForm->get('firstName')->setData($userAdresse->getFirstName());
+                    $shippingForm->get('lastName')->setData($userAdresse->getLastName());
+                }
                 $article = $this->getDoctrine()->getRepository(Article::class)->find($id);
                 $commande = new Commande();
                 $commande->setAmount($amount);
