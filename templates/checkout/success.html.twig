@@ -1,7 +1,18 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,400i,700,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/success.css') }}">
+{% endblock %}
+
 {% block body %}
-<p>Success</p>
+    <div class="card">
+        <div style="border-radius:200px; height:200px; width:200px; background: #F8FAF5; margin:0 auto;">
+            <i class="checkmark">✓</i>
+        </div>
+        <h1>Merci</h1>
+        <p>Nous avons reçu votre commande.<br/>Vous recevrez votre facture rapidement par email.<br/>Vous pouvez suivre votre commande sur <a href="{{ path('user') }}">votre profil.</a></p>
+    </div>
 {% endblock %}
 
 {% block title %}

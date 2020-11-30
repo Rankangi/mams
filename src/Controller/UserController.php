@@ -2,20 +2,14 @@
 
 namespace App\Controller;
 
-use App\Entity\Adresse;
 use App\Entity\User;
-use App\Form\AdresseType;
 use App\Form\DefaultAdresseType;
 use App\Form\UserType;
-use Doctrine\Persistence\ObjectManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Stripe\BillingPortal\Session;
-use Stripe\Stripe;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class UserController extends AbstractController
 {

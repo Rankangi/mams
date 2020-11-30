@@ -40,8 +40,7 @@ class CheckoutController extends AbstractController
             'payment_method_types' => ['card'],
             'customer' => $this->getUser()->getCustomerID(),
             'metadata' => [
-                'quantity' => $commande->getAmount(),
-                'id' => $commande->getArticle()->getId(),
+                'sessionId' => $sessionId,
             ],
             'line_items' => [[
                 'quantity' => $commande->getAmount(),
@@ -73,12 +72,10 @@ class CheckoutController extends AbstractController
 
         Stripe::setApiKey($this->getParameter('stripe_secret_key'));
         $data = Session::retrieve($request->query->get('session_id'))->metadata->values();
-        // On récupère la quantité vendue et l'id de l'article.
-        $quantity = $data[1];
-        $id = $data[0];
-
-        $article = $this->getDoctrine()->getRepository(Article::class)->find($id);
-        $article->setAmount($article->getAmount()-$quantity);
+        $commande = $this->getDoctrine()->getRepository(Commande::class)->findOneBy(['sessionId' => $data[0]]);
+        $commande->setStatut("Payée");
+        $article = $commande->getArticle();
+        $article->setAmount($article->getAmount()-$commande->getAmount());
         $manager = $this->getDoctrine()->getManager();
         $manager->persist($article);
         $manager->flush();
