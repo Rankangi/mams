@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\ProfileForm;
 
 use App\Entity\Adresse;
 use Symfony\Component\Form\AbstractType;
