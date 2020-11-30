@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% set user = app.user %}
 
 {% block title %}{% endblock %}
 
@@ -24,7 +25,7 @@
                     <div class="col-lg-7 col-md-10">
                         <h1 class="display-2 text-white">Hello Jesse</h1>
                         <p class="text-white mt-0 mb-5">This is your profile page. You can see the progress you've made with your work and manage your projects or assigned tasks</p>
-                        <a href="#!" class="btn btn-info">Edit profile</a>
+{#                        <a href="#!" class="btn btn-info">Edit profile</a>#}
                     </div>
                 </div>
             </div>
@@ -95,109 +96,103 @@
                                 <div class="col-8">
                                     <h3 class="mb-0">Mon profil</h3>
                                 </div>
-                                <div class="col-4 text-right">
-                                    <button class="btn btn-sm btn-primary" form="update" type="submit">Sauvegarder</button>
-                                </div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <form id="update" action="" method="post">
-                                <h6 class="heading-small text-muted mb-4">Utilisateur</h6>
-                                <div class="pl-lg-4">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="form-group focused">
-                                                <label class="form-control-label" for="input-first-name">Nom</label>
-                                                <input type="text" id="input-first-name" name="Nom" class="form-control form-control-alternative" placeholder="Nom" value="{{ user.firstName }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <div class="form-group focused">
-                                                <label class="form-control-label" for="input-last-name">Prénom</label>
-                                                <input type="text" id="input-last-name" name="Prénom" class="form-control form-control-alternative" placeholder="Prénom" value="{{ user.lastName }}" required>
-                                            </div>
+                            <h6 class="heading-small text-muted mb-4">Utilisateur</h6>
+                            {{ form_start(userForm) }}
+                            <div class="pl-lg-4">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group focused">
+                                            <label class="form-control-label" for="input-first-name">Nom</label>
+                                            {{ form_widget(userForm.firstName) }}
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="form-group focused">
-                                                <label class="form-control-label" for="input-username">Téléphone</label>
-                                                <input type="tel" pattern="0[6-7][0-9]{8}" id="input-username" name="Number" class="form-control form-control-alternative" placeholder="Téléphone" value="{{ user.number }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                <label class="form-control-label" for="input-email">Email</label>
-                                                <input type="email" id="input-email" name="Email" class="form-control form-control-alternative" placeholder="Email" value="{{ user.email }}" required>
-                                            </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group focused">
+                                            <label class="form-control-label" for="input-last-name">Prénom</label>
+                                            {{ form_widget(userForm.lastName) }}
                                         </div>
                                     </div>
                                 </div>
-                                <hr class="my-4">
-                                <!-- Address -->
-                                <h6 class="heading-small text-muted mb-4">Adresse</h6>
-                                <div class="pl-lg-4">
-                                    {% if user.defaultaddress == null %}
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="form-group focused">
-                                                    <label class="form-control-label" for="input-address">Adresse</label>
-                                                    <input id="input-address" name="Adresse" class="form-control form-control-alternative" placeholder="Adresse" value="" type="text" required>
-                                                </div>
-                                            </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group focused">
+                                            <label class="form-control-label" for="input-username">Téléphone</label>
+                                            {{ form_widget(userForm.number) }}
                                         </div>
-                                        <div class="row">
-                                            <div class="col-lg-4">
-                                                <div class="form-group focused">
-                                                    <label class="form-control-label" for="input-city">Ville</label>
-                                                    <input type="text" id="input-city" name="Ville" class="form-control form-control-alternative" placeholder="Ville" value="" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <div class="form-group focused">
-                                                    <label class="form-control-label" for="input-country">Pays</label>
-                                                    <input type="text" id="input-country" name="Pays" class="form-control form-control-alternative" placeholder="Pays" value="" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <div class="form-group">
-                                                    <label class="form-control-label" for="input-country">Code postal</label>
-                                                    <input type="number" id="input-postal-code" name="Cp" class="form-control form-control-alternative" placeholder="Code postal" value="" required>
-                                                </div>
-                                            </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="input-email">Email</label>
+                                            {{ form_widget(userForm.email) }}
                                         </div>
-                                    {% else %}
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="form-group focused">
-                                                    <label class="form-control-label" for="input-address">Adresse</label>
-                                                    <input id="input-address" name="Adresse" class="form-control form-control-alternative" placeholder="Adresse" value="{{ user.defaultaddress.street }}" type="text" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-4">
-                                                <div class="form-group focused">
-                                                    <label class="form-control-label" for="input-city">Ville</label>
-                                                    <input type="text" id="input-city" name="Ville" class="form-control form-control-alternative" placeholder="Ville" value="{{ user.defaultaddress.city }}" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <div class="form-group focused">
-                                                    <label class="form-control-label" for="input-country">Pays</label>
-                                                    <input type="text" id="input-country" name="Pays" class="form-control form-control-alternative" placeholder="Pays" value="{{ user.defaultaddress.country }}" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <div class="form-group">
-                                                    <label class="form-control-label" for="input-country">Code postal</label>
-                                                    <input type="number" id="input-postal-code" name="Cp" class="form-control form-control-alternative" placeholder="Code postal" value="{{ user.defaultaddress.codePostal }}" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {% endif %}
+                                    </div>
                                 </div>
-                            </form>
+                                <div class="row">
+                                    <div class="col text-right">
+                                        <button class="btn btn-sm btn-primary" type="submit">Sauvegarder</button>
+                                    </div>
+                                </div>
+                            </div>
+                            {{ form_end(userForm) }}
+                            <hr class="my-4">
+                            <!-- Address -->
+                            <div class="row">
+                                <div class="col">
+                                    <h6 class="heading-small text-muted mb-4">Adresse principale</h6>
+                                </div>
+                                <div class="dropdown text-right">
+                                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Mes autres adresses
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        {% for adresse in app.user.adresses %}
+                                            {% if adresse != app.user.defaultAddress %}
+                                                <a class="dropdown-item" href="{{ path("user") }}">{{ adresse.street }}</a>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {{ form_start(shippingForm) }}
+                            <div class="pl-lg-4">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group focused">
+                                            <label class="form-control-label" for="input-address">Adresse</label>
+                                            {{ form_widget(shippingForm.street) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="form-group focused">
+                                            <label class="form-control-label" for="input-city">Ville</label>
+                                            {{ form_widget(shippingForm.city) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group focused">
+                                            <label class="form-control-label" for="input-country">Pays</label>
+                                            {{ form_widget(shippingForm.country) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="input-country">Code postal</label>
+                                            {{ form_widget(shippingForm.codePostal) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col text-right">
+                                        <button class="btn btn-sm btn-primary" type="submit">Sauvegarder</button>
+                                    </div>
+                                </div>
+                            </div>
+                            {{ form_end(shippingForm) }}
                         </div>
                     </div>
                 </div>

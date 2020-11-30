@@ -4,6 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Adresse;
 use App\Entity\User;
+use App\Form\AdresseType;
+use App\Form\DefaultAdresseType;
+use App\Form\UserType;
 use Doctrine\Persistence\ObjectManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Stripe\BillingPortal\Session;
@@ -20,33 +23,42 @@ class UserController extends AbstractController
      * @Route("/user", name="user")
      * @IsGranted("ROLE_USER")
      * @param Request $request
-     * @param ObjectManager $manager
      * @return Response
      */
     public function index(Request $request)
     {
         $manager = $this->getDoctrine()->getManager();
         $user = $manager->getRepository(User::class)->find($this->getUser()->getId());
+        $userForm = $this->createForm(UserType::class,$user);
+        $userForm->handleRequest($request);
 
-        if ($request->request->count() > 0){
-            if($user->getDefaultAddress() == null){
-                $user->setDefaultAddress(new Adresse());
+        $shippingAddress = $user->getDefaultAddress();
+        $shippingForm = $this->createForm(DefaultAdresseType::class, $shippingAddress);
+        $shippingForm->handleRequest($request);
+
+        if ($userForm->isSubmitted() && $userForm->isValid()){
+            $user = $userForm->getData();
+            if ($user->getDefaultAddress() != null){
+                $shippingAddress->setFirstName($user->getFirstName());
+                $shippingAddress->setLastName($user->getLastName());
             }
-            $user->setFirstName($request->request->get('Nom'))
-                 ->setlastName($request->request->get('Prénom'))
-                 ->setNumber($request->request->get('Number'));
-            $user->getDefaultAddress()->setStreet($request->request->get('Adresse'))
-                 ->setCity($request->request->get('Ville'))
-                 ->setCountry($request->request->get('Pays'))
-                 ->setCodePostal($request->request->get('Cp'))
-                 ->setFirst(true)
-                 ->setUser($user);
-
-            $manager->persist($user);
             $manager->flush();
         }
 
+        else if ($shippingForm->isSubmitted() && $shippingForm->isValid()){
+            if ($shippingAddress == null){
+                $shippingAddress = $shippingForm->getData();
+                $shippingAddress->setFirstName($user->getFirstName());
+                $shippingAddress->setLastName($user->getLastName());
+                $shippingAddress->setUser($user);
+                $user->setDefaultAddress($shippingAddress);
+                $manager->persist($shippingAddress);
+            }else{
+                $shippingAddress = $shippingForm->getData();
+            }
+            $manager->flush();
+        }
 
-        return $this->render('base/user.html.twig', ['user' => $this->getUser()]);
+        return $this->render('base/user.html.twig', ['userForm' => $userForm->createView(), "shippingForm" => $shippingForm->createView()]);
     }
 }
