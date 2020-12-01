@@ -4,7 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    app.path.article_images: uploads/images/article
+    app.path.article_images: /uploads/images/article
     stripe_secret_key: "sk_test_RAFVSpJjOkoG4FncPKfKtLYu004jHQjFTm"
     stripe_public_key: "pk_test_MNEO6ty8yTmiLUmuaAuprTLS001rO0EvPp"
 
