@@ -31,9 +31,9 @@ class UserCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        return $actions->disable(Crud::PAGE_INDEX, Action::NEW)
-            ->disable(Crud::PAGE_INDEX, Action::EDIT)
-            ->disable(Crud::PAGE_INDEX, Action::DELETE);
+        return $actions->remove(Crud::PAGE_INDEX, Action::NEW)
+            ->remove(Crud::PAGE_INDEX, Action::EDIT)
+            ->remove(Crud::PAGE_INDEX, Action::DELETE);
     }
 
     public function configureCrud(Crud $crud): Crud

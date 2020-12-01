@@ -33,8 +33,8 @@ class AdresseCrudController extends AbstractCrudController
         return $actions->disable(Crud::PAGE_INDEX, Action::NEW)
             ->disable(Crud::PAGE_INDEX, Action::EDIT)
             ->disable(Crud::PAGE_INDEX, Action::DELETE)
-            ->disable(Crud::PAGE_DETAIL, Action::DELETE)
-            ->disable(Crud::PAGE_DETAIL, Action::EDIT)
-            ->disable(Crud::PAGE_DETAIL, Action::INDEX);
+            ->remove(Crud::PAGE_DETAIL, Action::DELETE)
+            ->remove(Crud::PAGE_DETAIL, Action::EDIT)
+            ->remove(Crud::PAGE_DETAIL, Action::INDEX);
     }
 }
