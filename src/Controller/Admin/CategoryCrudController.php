@@ -3,6 +3,9 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Category;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -19,7 +22,13 @@ class CategoryCrudController extends AbstractCrudController
     {
         return [
             TextField::new('title','Titre'),
-            TextEditorField::new('description','Description')->hideOnIndex(),
+            TextEditorField::new('description','Description'),
         ];
+    }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud->setEntityLabelInSingular('Catégorie')
+            ->setEntityLabelInPlural('Catégories');
     }
 }
