@@ -25,7 +25,7 @@
                     <div class="col-lg-7 col-md-10">
                         <h1 class="display-2 text-white">Hello {{ user.getLastName }}</h1>
                         <p class="text-white mt-0 mb-5">Voici votre page de profil, ici vous pouvez modifier vos informations personnels ainsi que voir vos dernières commandes.</p>
-{#                        <a href="#!" class="btn btn-info">Edit profile</a>#}
+                        {#                        <a href="#!" class="btn btn-info">Edit profile</a>#}
                     </div>
                 </div>
             </div>
@@ -35,53 +35,26 @@
             <div class="row">
                 <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
                     <div class="card card-profile shadow">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-3 order-lg-2">
-                                <div class="card-profile-image">
-                                    <a href="#">
-                                        <img src="https://raw.githack.com/creativetimofficial/argon-dashboard/master/assets/img/theme/team-4-800x800.jpg" class="rounded-circle">
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
-                            <div class="d-flex justify-content-between">
-                                <a href="#" class="btn btn-sm btn-info mr-4">Connect</a>
-                                <a href="#" class="btn btn-sm btn-default float-right">Message</a>
-                            </div>
-                        </div>
                         <div class="card-body pt-0 pt-md-4">
-                            <div class="row">
-                                <div class="col">
-                                    <div class="card-profile-stats d-flex justify-content-center mt-md-5">
-                                        <div>
-                                            <span class="heading">22</span>
-                                            <span class="description">Friends</span>
+                            <h2>Commandes en cours:</h2>
+                            {% for commande in listeCommandes %}
+                                <div class="card mb-3">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <img class="card-img" src="{{asset( 'uploads/images/article/')}}{{ commande.article.image}}" alt="...">
                                         </div>
-                                        <div>
-                                            <span class="heading">10</span>
-                                            <span class="description">Photos</span>
-                                        </div>
-                                        <div>
-                                            <span class="heading">89</span>
-                                            <span class="description">Comments</span>
+                                        <div class="col-md-8">
+                                            <div class="card-body">
+                                                <h5 class="card-title">{{ commande.article.title }}</h5>
+                                                <p class="card-text">{{ commande.statut }}</p>
+                                                <p class="card-text">{{ commande.article.price * commande.amount/100 }}€</p>
+                                                {#                                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>#}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            {% endfor %}
                             <div class="text-center">
-                                <h3>
-                                    Jessica Jones<span class="font-weight-light">, 27</span>
-                                </h3>
-                                <div class="h5 font-weight-300">
-                                    <i class="ni location_pin mr-2"></i>Bucharest, Romania
-                                </div>
-                                <div class="h5 mt-4">
-                                    <i class="ni business_briefcase-24 mr-2"></i>Solution Manager - Creative Tim Officer
-                                </div>
-                                <div>
-                                    <i class="ni education_hat mr-2"></i>University of Computer Science
-                                </div>
                                 <hr class="my-4">
                                 <p>Ryan — the name taken by Melbourne-raised, Brooklyn-based Nick Murphy — writes, performs and records all of his own music.</p>
                                 <a href="#">Show more</a>

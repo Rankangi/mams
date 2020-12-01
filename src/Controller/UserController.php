@@ -53,6 +53,6 @@ class UserController extends AbstractController
             $manager->flush();
         }
 
-        return $this->render('base/user.html.twig', ['userForm' => $userForm->createView(), "shippingForm" => $shippingForm->createView()]);
+        return $this->render('base/user.html.twig', ['userForm' => $userForm->createView(), "shippingForm" => $shippingForm->createView(), 'listeCommandes' => $user->getCommandes()]);
     }
 }
