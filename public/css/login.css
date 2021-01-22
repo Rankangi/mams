@@ -27,6 +27,7 @@ a{
     right:0;left:0;
     margin:auto;
     height:400px;
+    color: white;
     background-color: rgba(236, 48, 20, 0.9);
 }
 .white-panel{
@@ -44,13 +45,10 @@ a{
     position:relative;
     display:none;
 }
-.login-reg-panel{
-    color:#B8B8B8;
-}
 .login-reg-panel #label-login,
 .login-reg-panel #label-register{
-    border:1px solid #9E9E9E;
-    color: #444444;
+    color: white;
+    background-color: #444444;
     padding:5px 5px;
     width:150px;
     display:block;
