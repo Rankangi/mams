@@ -69,6 +69,11 @@ class User implements UserInterface
     private $commandes;
 
     /**
+     * @ORM\OneToMany(targetEntity=PrepareCommande::class, mappedBy="user", orphanRemoval=true)
+     */
+    private $prepareCommandes;
+
+    /**
      * @ORM\OneToMany(targetEntity=Adresse::class, mappedBy="user")
      */
     private $adresses;
@@ -244,6 +249,37 @@ class User implements UserInterface
     {
         if ($this->commandes->contains($commande)) {
             $this->commandes->removeElement($commande);
+            // set the owning side to null (unless already changed)
+            if ($commande->getUser() === $this) {
+                $commande->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PrepareCommande[]
+     */
+    public function getPrepareCommandes(): Collection
+    {
+        return $this->prepareCommandes;
+    }
+
+    public function addPrepareCommande(PrepareCommande $commande): self
+    {
+        if (!$this->prepareCommandes->contains($commande)) {
+            $this->prepareCommandes[] = $commande;
+            $commande->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePrepareCommande(PrepareCommande $commande): self
+    {
+        if ($this->prepareCommandes->contains($commande)) {
+            $this->prepareCommandes->removeElement($commande);
             // set the owning side to null (unless already changed)
             if ($commande->getUser() === $this) {
                 $commande->setUser(null);

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Adresse;
 use App\Entity\Article;
 use App\Entity\Commande;
+use App\Entity\PrepareCommande;
 use App\Entity\User;
 use App\Form\AdresseType;
 use Exception;
@@ -34,7 +35,7 @@ class CheckoutController extends AbstractController
      */
     public function index(string $sessionId, Request $request)
     {
-        $commande = $this->getDoctrine()->getRepository(Commande::class)->findOneBy(['sessionId' => $sessionId]);
+        $commande = $this->getDoctrine()->getRepository(PrepareCommande::class)->findOneBy(['sessionId' => $sessionId]);
 
 
 
@@ -74,13 +75,29 @@ class CheckoutController extends AbstractController
      */
     public function checkout_success(Request $request){
 
+        // Récupération des données
         Stripe::setApiKey($this->getParameter('stripe_secret_key'));
         $data = Session::retrieve($request->query->get('session_id'))->metadata->values();
-        $commande = $this->getDoctrine()->getRepository(Commande::class)->findOneBy(['sessionId' => $data[0]]);
+        $prepcommande = $this->getDoctrine()->getRepository(PrepareCommande::class)->findOneBy(['sessionId' => $data[0]]);
+
+        // Changement de Table : PrepareCommande -> Commande
+        $commande = new Commande();
         $commande->setStatut("Payée");
-        $article = $commande->getArticle();
-        $article->setAmount($article->getAmount()-$commande->getAmount());
+        $commande->setUser($prepcommande->getUser());
+        $commande->setArticle($prepcommande->getArticle());
+        $commande->setShippingAddress($prepcommande->getShippingAddress());
+        $commande->setBillingAddress($prepcommande->getBillingAddress());
+        $commande->setAmount($prepcommande->getAmount());
+        $commande->setSessionId($prepcommande->getSessionId());
+
+        // Mise à jour du nombre d'article restant
+        $article = $prepcommande->getArticle();
+        $article->setAmount($article->getAmount()-$prepcommande->getAmount());
+
+        // Sauvegarde dans la BDD
         $manager = $this->getDoctrine()->getManager();
+        $manager->persist($commande);
+        $manager->remove($prepcommande);
         $manager->persist($article);
         $manager->flush();
 
@@ -111,7 +128,7 @@ class CheckoutController extends AbstractController
 
         if ($billingForm->isSubmitted() && $billingForm->isValid()){
             $adresse = $billingForm->getData();
-            $commande = $this->getDoctrine()->getRepository(Commande::class)->findOneBy(['sessionId' => $billingForm->get('sessionId')->getData()]);
+            $commande = $this->getDoctrine()->getRepository(PrepareCommande::class)->findOneBy(['sessionId' => $billingForm->get('sessionId')->getData()]);
             $adresse->setUser($user);
             $billingAdresse = $this->getDoctrine()->getRepository(Adresse::class)->findByAdresse($adresse);
             if ($billingAdresse == null){
@@ -170,6 +187,11 @@ class CheckoutController extends AbstractController
         $manager = $this->getDoctrine()->getManager();
         $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $this->getUser()->getUsername()]);
 
+        if (!$user->isVerified()){
+            $this->addFlash('alerte', "Veuillez d'abord confirmer votre email !");
+            return $this->redirectToRoute('article_show', ["id" => $id]);
+        }
+
         if ($shippingForm->isSubmitted() && $shippingForm->isValid()){
             $adresse = $shippingForm->getData();
             $adresse->setUser($user);
@@ -178,7 +200,7 @@ class CheckoutController extends AbstractController
                 $shippingAdresse = $adresse;
                 $manager->persist($shippingAdresse);
             }
-            $commande = $this->getDoctrine()->getRepository(Commande::class)->findOneBy(['sessionId' => $shippingForm->get('sessionId')->getData()]);
+            $commande = $this->getDoctrine()->getRepository(PrepareCommande::class)->findOneBy(['sessionId' => $shippingForm->get('sessionId')->getData()]);
             $commande->setShippingAddress($shippingAdresse);
 
             if ($shippingForm->get('differentBillingAddress')->getData()){
@@ -220,7 +242,7 @@ class CheckoutController extends AbstractController
                     $shippingForm->get('lastName')->setData($userAdresse->getLastName());
                 }
                 $article = $this->getDoctrine()->getRepository(Article::class)->find($id);
-                $commande = new Commande();
+                $commande = new PrepareCommande();
                 $commande->setAmount($amount);
                 $commande->setArticle($article);
                 $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $this->getUser()->getUsername()]);
