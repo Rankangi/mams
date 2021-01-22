@@ -18,10 +18,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+
+/**
+ * @Route("/checkout", name="checkout")
+ */
 class CheckoutController extends AbstractController
 {
     /**
-     * @Route("/aled/{sessionId}", name="checkout")
+     * @Route("/aled/{sessionId}", name="")
      * @param string $sessionId
      * @param Request $request
      * @return Response
@@ -64,7 +68,7 @@ class CheckoutController extends AbstractController
     }
 
     /**
-     * @Route("/success", name="checkout_success")
+     * @Route("/success", name="_success")
      * @param Request $request
      * @return Response
      */
@@ -80,18 +84,18 @@ class CheckoutController extends AbstractController
         $manager->persist($article);
         $manager->flush();
 
-        return $this->redirectToRoute('show_success');
+        return $this->redirectToRoute('checkout_show_success');
     }
 
     /**
-     * @Route("/success_show", name="show_success")
+     * @Route("/success_show", name="_show_success")
      */
     public function show_success(){
         return $this->render('checkout/success.html.twig');
     }
 
     /**
-     * @Route("/checkout/billing/{sessionId}", name="getBillingAdresse")
+     * @Route("/billing/{sessionId}", name="_getBillingAdresse")
      * @param Request $request
      * @param string $sessionId
      * @return Response
@@ -147,7 +151,7 @@ class CheckoutController extends AbstractController
     }
 
     /**
-     * @Route("/checkout/shipping", name="getShippingAdresse")
+     * @Route("/shipping", name="_getShippingAdresse")
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -181,7 +185,7 @@ class CheckoutController extends AbstractController
                 $manager->persist($commande);
                 $manager->flush();
 
-                return $this->redirectToRoute("getBillingAdresse", ["sessionId" => $commande->getSessionId()]);
+                return $this->redirectToRoute("checkout_getBillingAdresse", ["sessionId" => $commande->getSessionId()]);
 
             }else {
                 $commande->setBillingAddress($shippingAdresse);

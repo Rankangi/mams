@@ -34,9 +34,9 @@
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                             {% for adresse in app.user.adresses %}
                                                 {% if shipping %}
-                                                    <a class="dropdown-item" href="{{ path('getShippingAdresse',{'street': adresse.street, 'sessionId': form.children["sessionId"].vars["value"]}) }}">{{ adresse.street }}</a>
+                                                    <a class="dropdown-item" href="{{ path('checkout_getShippingAdresse',{'street': adresse.street, 'sessionId': form.children["sessionId"].vars["value"]}) }}">{{ adresse.street }}</a>
                                                 {% else %}
-                                                    <a class="dropdown-item" href="{{ path('getBillingAdresse',{'street': adresse.street, 'sessionId': form.children["sessionId"].vars["value"]}) }}">{{ adresse.street }}</a>
+                                                    <a class="dropdown-item" href="{{ path('checkout_getBillingAdresse',{'street': adresse.street, 'sessionId': form.children["sessionId"].vars["value"]}) }}">{{ adresse.street }}</a>
 
                                                 {% endif %}
                                             {% endfor %}

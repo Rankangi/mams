@@ -79,7 +79,7 @@
         var checkoutButton = document.getElementById('checkout-button');
         var amountValue = document.getElementById('amount');
         checkoutButton.addEventListener('click', function (){
-            var url = '{{ path('getShippingAdresse', {'id': article.id, 'amount': "amount_value" })|escape('js') }}';
+            var url = '{{ path('checkout_getShippingAdresse', {'id': article.id, 'amount': "amount_value" })|escape('js') }}';
             url = url.replace("amount_value",amountValue.value);
             this.href = url;
 
