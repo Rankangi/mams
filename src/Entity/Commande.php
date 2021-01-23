@@ -61,6 +61,11 @@ class Commande
      */
     private $Facture;
 
+    /**
+     * @ORM\Column(type="date")
+     */
+    private $Date;
+
 
     public function getId(): ?int
     {
@@ -159,6 +164,18 @@ class Commande
     public function setFacture(string $Facture): self
     {
         $this->Facture = $Facture;
+
+        return $this;
+    }
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->Date;
+    }
+
+    public function setDate(\DateTimeInterface $Date): self
+    {
+        $this->Date = $Date;
 
         return $this;
     }

@@ -8,6 +8,7 @@ use App\Entity\Commande;
 use App\Entity\PrepareCommande;
 use App\Entity\User;
 use App\Form\AdresseType;
+use DateTime;
 use Exception;
 use Konekt\PdfInvoice\InvoicePrinter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -98,6 +99,8 @@ class CheckoutController extends AbstractController
         $commande->setAmount($prepcommande->getAmount());
         $commande->setSessionId($prepcommande->getSessionId());
 
+        $commandes = $this->getDoctrine()->getRepository(Commande::class)->findBy(["Date" => new DateTime()]);
+        $nb = count($commandes) + 1;
         // Mise à jour du nombre d'article restant
         $article = $prepcommande->getArticle();
         $article->setAmount($article->getAmount()-$prepcommande->getAmount());
@@ -110,7 +113,7 @@ class CheckoutController extends AbstractController
         $invoice->setLogo("../public/uploads/images/article/468827-parrot-parrot_security-Linux-Debian-hacking.jpg");   //logo image path
         $invoice->setColor("#007fff");      // pdf color scheme
         $invoice->setType("Facture");    // Invoice Type
-        $invoice->setReference("INV-".date('ymd'));   // Reference
+        $invoice->setReference("INV-".date('ymd').$nb);   // Reference
         $invoice->setDate(date('d/m/Y',time()));   //Billing Date
         $invoice->setTime(date('H:i:s',time()));   //Billing Time
 //        $invoice->setDue(date('M dS ,Y',strtotime('+3 months')));    // Due Date
@@ -134,19 +137,19 @@ class CheckoutController extends AbstractController
             mkdir('../factures/'.$commande->getBillingAddress()->getFirstName(), 0777, true);
         }
 
-        $invoice->render("../factures/".$commande->getBillingAddress()->getFirstName()."/INV-".date('ymd').".pdf",'F');
+        $invoice->render("../factures/".$commande->getBillingAddress()->getFirstName()."/INV-".date('ymd').$nb.".pdf",'F');
 
         // Envoie de la facture
         $email = (new Email())
             ->from('no-reply@joycreation.fr')
             ->to($this->getUser()->getUsername())
-            ->attachFromPath("../factures/".$commande->getBillingAddress()->getFirstName()."/INV-".date('ymd').".pdf", 'facture');
+            ->attachFromPath("../factures/".$commande->getBillingAddress()->getFirstName()."/INV-".date('ymd').$nb.".pdf", 'facture');
 
         $mailer->send($email);
 
-
         // Sauvegarde dans la BDD
-        $commande->setFacture("INV-".date('ymd'));
+        $commande->setDate(new DateTime());
+        $commande->setFacture("INV-".date('ymd').$nb);
         $manager = $this->getDoctrine()->getManager();
         $manager->persist($commande);
         $manager->remove($prepcommande);
