@@ -9,6 +9,7 @@ use App\Entity\PrepareCommande;
 use App\Entity\User;
 use App\Form\AdresseType;
 use Exception;
+use Konekt\PdfInvoice\InvoicePrinter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
@@ -16,6 +17,9 @@ use Stripe\Exception\ApiErrorException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -71,9 +75,13 @@ class CheckoutController extends AbstractController
     /**
      * @Route("/success", name="_success")
      * @param Request $request
+     * @param MailerInterface $mailer
      * @return Response
+     * @throws ApiErrorException
+     * @throws TransportExceptionInterface
      */
-    public function checkout_success(Request $request){
+    public function checkout_success(Request $request, MailerInterface $mailer): Response
+    {
 
         // Récupération des données
         Stripe::setApiKey($this->getParameter('stripe_secret_key'));
@@ -94,20 +102,67 @@ class CheckoutController extends AbstractController
         $article = $prepcommande->getArticle();
         $article->setAmount($article->getAmount()-$prepcommande->getAmount());
 
+        // Création de la facture
+        $invoice = new InvoicePrinter("A4", "€", "fr");
+        $invoice->setNumberFormat('.', ' ', 'right', 'true', 'false');
+
+        /* Header settings */
+        $invoice->setLogo("../public/uploads/images/article/468827-parrot-parrot_security-Linux-Debian-hacking.jpg");   //logo image path
+        $invoice->setColor("#007fff");      // pdf color scheme
+        $invoice->setType("Facture");    // Invoice Type
+        $invoice->setReference("INV-".date('ymd'));   // Reference
+        $invoice->setDate(date('d/m/Y',time()));   //Billing Date
+        $invoice->setTime(date('H:i:s',time()));   //Billing Time
+//        $invoice->setDue(date('M dS ,Y',strtotime('+3 months')));    // Due Date
+        $invoice->setFrom(array("JoyCreation (Josiane Bannwarth)","23 rue de blodelsheim","68740 Rumersheim-Le-Haut", "France", "SIRET: 0123456789"));
+        $invoice->setTo(array($commande->getBillingAddress()->getFirstName() . " " . $commande->getBillingAddress()->getLastName() ,$commande->getUser()->getEmail(),$commande->getBillingAddress()->getStreet(),$commande->getBillingAddress()->getCodePostal() . " " . $commande->getBillingAddress()->getCity() . " " . $commande->getBillingAddress()->getCountry()));
+        $invoice->addItem($commande->getArticle()->getTitle(),$commande->getArticle()->getDescription(),$commande->getAmount(),0,$commande->getArticle()->getPrice()/100,0,$commande->getAmount()*$commande->getArticle()->getPrice()/100);
+
+        $invoice->addTotal("Total",$commande->getAmount()*$commande->getArticle()->getPrice()/100);
+        $invoice->addTotal("VAT 0%",0);
+        $invoice->addTotal("Total due",$commande->getAmount()*$commande->getArticle()->getPrice()/100,true);
+
+        $invoice->addBadge("Facture Payée");
+
+        $invoice->addTitle("Note importante");
+
+        $invoice->addParagraph("TVA non applicable, art. 293 B du CGI");
+
+        $invoice->setFooternote("JoyCreation");
+
+        if (!file_exists('../factures/'.$commande->getBillingAddress()->getFirstName())) {
+            mkdir('../factures/'.$commande->getBillingAddress()->getFirstName(), 0777, true);
+        }
+
+        $invoice->render("../factures/".$commande->getBillingAddress()->getFirstName()."/INV-".date('ymd').".pdf",'F');
+
+        // Envoie de la facture
+        $email = (new Email())
+            ->from('no-reply@joycreation.fr')
+            ->to($this->getUser()->getUsername())
+            ->attachFromPath("../factures/".$commande->getBillingAddress()->getFirstName()."/INV-".date('ymd').".pdf", 'facture');
+
+        $mailer->send($email);
+
+
         // Sauvegarde dans la BDD
+        $commande->setFacture("INV-".date('ymd'));
         $manager = $this->getDoctrine()->getManager();
         $manager->persist($commande);
         $manager->remove($prepcommande);
         $manager->persist($article);
         $manager->flush();
+        /* I => Display on browser, D => Force Download, F => local path save, S => return document as string */
 
         return $this->redirectToRoute('checkout_show_success');
     }
 
     /**
      * @Route("/success_show", name="_show_success")
+     * @return Response
      */
-    public function show_success(){
+    public function show_success(): Response
+    {
         return $this->render('checkout/success.html.twig');
     }
 
@@ -117,7 +172,8 @@ class CheckoutController extends AbstractController
      * @param string $sessionId
      * @return Response
      */
-    public function getBillingAdresse(Request $request, string $sessionId){
+    public function getBillingAdresse(Request $request, string $sessionId): Response
+    {
         $billingAdresse = new Adresse();
         $street = $request->query->get('street');
 

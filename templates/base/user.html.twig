@@ -11,6 +11,7 @@
     <link href="{{ asset('css/user.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.3.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}
 
 {% block body %}
@@ -48,6 +49,7 @@
                                                 <h5 class="card-title">{{ commande.article.title }}</h5>
                                                 <p class="card-text">{{ commande.statut }}</p>
                                                 <p class="card-text">{{ commande.article.price * commande.amount/100 }}€</p>
+                                                <button class="btn" onclick="location.href = '{{ path('download_invoice', {"id": commande.sessionId}) }}'"><i class="fa fa-download"></i> Facture</button>
                                                 {#                                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>#}
                                             </div>
                                         </div>

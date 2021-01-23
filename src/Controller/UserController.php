@@ -2,11 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Commande;
 use App\Entity\User;
 use App\Form\DefaultAdresseType;
 use App\Form\UserType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -54,5 +56,20 @@ class UserController extends AbstractController
         }
 
         return $this->render('base/user.html.twig', ['userForm' => $userForm->createView(), "shippingForm" => $shippingForm->createView(), 'listeCommandes' => $user->getCommandes()]);
+    }
+
+    /**
+     * @param String $id
+     * @return BinaryFileResponse
+     * @Route("/user/download/{id}", name="download_invoice")
+     */
+    public function downloadInvoice(String $id): BinaryFileResponse
+    {
+        $commande = $this->getDoctrine()->getRepository(Commande::class)->findOneBy(["sessionId" => $id]);
+        if ($commande == null){
+            $this->addFlash("alerte", "SessionID invalide");
+        }else{
+            return $this->file("../factures/". $commande->getBillingAddress()->getFirstName()."/".$commande->getFacture().".pdf");
+        }
     }
 }

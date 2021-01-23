@@ -56,6 +56,11 @@ class Commande
      */
     private $sessionId;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $Facture;
+
 
     public function getId(): ?int
     {
@@ -142,6 +147,18 @@ class Commande
     public function setSessionId(string $sessionId): self
     {
         $this->sessionId = $sessionId;
+
+        return $this;
+    }
+
+    public function getFacture(): ?string
+    {
+        return $this->Facture;
+    }
+
+    public function setFacture(string $Facture): self
+    {
+        $this->Facture = $Facture;
 
         return $this;
     }
