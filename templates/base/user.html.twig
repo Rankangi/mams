@@ -39,28 +39,47 @@
                         <div class="card-body pt-0 pt-md-4">
                             <h2>Commandes en cours:</h2>
                             {% for commande in listeCommandes %}
-                                <div class="card mb-3">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <img class="card-img" src="{{asset( 'uploads/images/article/')}}{{ commande.article.image}}" alt="...">
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="card-body">
-                                                <h5 class="card-title">{{ commande.article.title }}</h5>
-                                                <p class="card-text">{{ commande.statut }}</p>
-                                                <p class="card-text">{{ commande.article.price * commande.amount/100 }}€</p>
-                                                <button class="btn" onclick="location.href = '{{ path('download_invoice', {"id": commande.sessionId}) }}'"><i class="fa fa-download"></i> Facture</button>
-                                                {#                                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>#}
+                                {% if commande.statut == "Payée" %}
+                                    <div class="card mb-3">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <img class="card-img" src="{{asset( 'uploads/images/article/')}}{{ commande.article.image}}" alt="...">
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">{{ commande.article.title }}</h5>
+                                                    <p class="card-text">{{ commande.statut }}</p>
+                                                    <p class="card-text">{{ commande.article.price * commande.amount/100 }}€</p>
+                                                    <button class="btn" onclick="location.href = '{{ path('download_invoice', {"id": commande.sessionId}) }}'"><i class="fa fa-download"></i> Facture</button>
+                                                    {#                                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>#}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                {% endif %}
                             {% endfor %}
-                            <div class="text-center">
-                                <hr class="my-4">
-                                <p>Ryan — the name taken by Melbourne-raised, Brooklyn-based Nick Murphy — writes, performs and records all of his own music.</p>
-                                <a href="#">Show more</a>
-                            </div>
+                            <hr class="my-4">
+                            <h2>Commandes terminées:</h2>
+                            {% for commande in listeCommandes %}
+                                {% if commande.statut == "Terminée" %}
+                                    <div class="card mb-3">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <img class="card-img" src="{{asset( 'uploads/images/article/')}}{{ commande.article.image}}" alt="...">
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">{{ commande.article.title }}</h5>
+                                                    <p class="card-text">{{ commande.statut }}</p>
+                                                    <p class="card-text">{{ commande.article.price * commande.amount/100 }}€</p>
+                                                    <button class="btn" onclick="location.href = '{{ path('download_invoice', {"id": commande.sessionId}) }}'"><i class="fa fa-download"></i> Facture</button>
+                                                    {#                                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>#}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
                         </div>
                     </div>
                 </div>

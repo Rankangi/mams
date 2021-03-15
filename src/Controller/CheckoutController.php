@@ -15,11 +15,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
 use Stripe\Exception\ApiErrorException;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -119,7 +121,7 @@ class CheckoutController extends AbstractController
 //        $invoice->setDue(date('M dS ,Y',strtotime('+3 months')));    // Due Date
         $invoice->setFrom(array("JoyCreation (Josiane Bannwarth)","23 rue de blodelsheim","68740 Rumersheim-Le-Haut", "France", "SIRET: 0123456789"));
         $invoice->setTo(array($commande->getBillingAddress()->getFirstName() . " " . $commande->getBillingAddress()->getLastName() ,$commande->getUser()->getEmail(),$commande->getBillingAddress()->getStreet(),$commande->getBillingAddress()->getCodePostal() . " " . $commande->getBillingAddress()->getCity() . " " . $commande->getBillingAddress()->getCountry()));
-        $invoice->addItem($commande->getArticle()->getTitle(),$commande->getArticle()->getDescription(),$commande->getAmount(),0,$commande->getArticle()->getPrice()/100,0,$commande->getAmount()*$commande->getArticle()->getPrice()/100);
+        $invoice->addItem($commande->getArticle()->getTitle(),strip_tags($commande->getArticle()->getDescription()),$commande->getAmount(),0,$commande->getArticle()->getPrice()/100,0,$commande->getAmount()*$commande->getArticle()->getPrice()/100);
 
         $invoice->addTotal("Total",$commande->getAmount()*$commande->getArticle()->getPrice()/100);
         $invoice->addTotal("VAT 0%",0);
@@ -133,19 +135,11 @@ class CheckoutController extends AbstractController
 
         $invoice->setFooternote("JoyCreation");
 
-        if (!file_exists('../factures/'.$commande->getBillingAddress()->getFirstName())) {
-            mkdir('../factures/'.$commande->getBillingAddress()->getFirstName(), 0777, true);
+        if (!file_exists('../factures/'.$commande->getBillingAddress()->getUser()->getCustomerID())) {
+            mkdir('../factures/'.$commande->getBillingAddress()->getUser()->getCustomerID(), 0777, true);
         }
 
-        $invoice->render("../factures/".$commande->getBillingAddress()->getFirstName()."/INV-".date('ymd').$nb.".pdf",'F');
-
-        // Envoie de la facture
-        $email = (new Email())
-            ->from('no-reply@joycreation.fr')
-            ->to($this->getUser()->getUsername())
-            ->attachFromPath("../factures/".$commande->getBillingAddress()->getFirstName()."/INV-".date('ymd').$nb.".pdf", 'facture');
-
-        $mailer->send($email);
+        $invoice->render("../factures/".$commande->getBillingAddress()->getUser()->getCustomerID()."/INV-".date('ymd').$nb.".pdf",'F');
 
         // Sauvegarde dans la BDD
         $commande->setDate(new DateTime());
@@ -156,6 +150,19 @@ class CheckoutController extends AbstractController
         $manager->persist($article);
         $manager->flush();
         /* I => Display on browser, D => Force Download, F => local path save, S => return document as string */
+
+        // Envoie de la facture
+        $email = (new TemplatedEmail())
+            ->from(new Address('no-reply@joycreation.fr', 'JoyCreation'))
+            ->subject("Votre facture JoyCreation INV-".date('ymd').$nb)
+            ->to($this->getUser()->getUsername())
+            ->attachFromPath("../factures/".$commande->getBillingAddress()->getUser()->getCustomerID()."/INV-".date('ymd').$nb.".pdf", 'facture')
+            ->htmlTemplate('registration/test.html.twig')
+            ->context([
+                'commande' => $commande,
+            ]);
+
+        $mailer->send($email);
 
         return $this->redirectToRoute('checkout_show_success');
     }

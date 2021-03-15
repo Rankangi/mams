@@ -69,7 +69,7 @@ class UserController extends AbstractController
         if ($commande == null){
             $this->addFlash("alerte", "SessionID invalide");
         }else{
-            return $this->file("../factures/". $commande->getBillingAddress()->getFirstName()."/".$commande->getFacture().".pdf");
+            return $this->file("../factures/". $commande->getBillingAddress()->getUser()->getCustomerID()."/".$commande->getFacture().".pdf");
         }
     }
 }
