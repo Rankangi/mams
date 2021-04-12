@@ -157,7 +157,7 @@ class CheckoutController extends AbstractController
             ->subject("Votre facture JoyCreation INV-".date('ymd').$nb)
             ->to($this->getUser()->getUsername())
             ->attachFromPath("../factures/".$commande->getBillingAddress()->getUser()->getCustomerID()."/INV-".date('ymd').$nb.".pdf", 'facture')
-            ->htmlTemplate('registration/test.html.twig')
+            ->htmlTemplate('registration/facture_email.html.twig')
             ->context([
                 'commande' => $commande,
             ]);

@@ -3,88 +3,207 @@
 {% block title %}{{ article.title }}{% endblock %}
 
 {% block stylesheets %}
-    <!-- Custom styles for this template -->
-    <link href="{{ asset('css/shop-item.css') }}" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link href="{{ asset('css/article.css.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
-
-    <!-- Page Content -->
+{#    <section class="jumbotron text-center">#}
+{#        <div class="container">#}
+{#            <h1 class="jumbotron-heading">E-COMMERCE PRODUCT</h1>#}
+{#            <p class="lead text-muted mb-0">Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression. Le Lorem Ipsum est le faux texte standard de l'imprimerie depuis les années 1500...</p>#}
+{#        </div>#}
+{#    </section>#}
     <div class="container">
-
-        <div class="row justify-content-center">
-            <!-- /.col-lg-3 -->
-
-            <div class="col-lg-9">
-
-                <div class="card mt-4">
-                    <img class="card-img-top img-fluid" src={{asset( 'uploads/images/article/')}}{{ article.image}} alt="">
+        <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Accueil</a></li>
+                        <li class="breadcrumb-item"><a href="/category/{{ article.category.id }}">{{ article.category }}</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ article.title }}</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <!-- Image -->
+            <div class="col-12 col-lg-6">
+                <div class="card bg-light mb-3">
                     <div class="card-body">
-                        <h3 class="card-title">{{ article.title }}</h3>
-                        <p class="card-text">{{ article.content | raw }}</p>
-                        <div class="card-footer">
-                            <div class="container">
-                                <div class="row justify-content-around">
-                                    <div class="col-lg-7">
-                                        <label for="amount">Quantité :</label>
-                                        <select id="amount" class="custom-select-sm">
-                                            {% for i in 1..article.amount %}
-                                                <option>{{ i }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    <div class="col-lg-2">
-                                        {#                                        TODO: changer le prix avec la quantité.#}
-                                        <h4 class="card-price text-right">{{ article.price/100 }} €</h4>
-                                    </div>
-                                </div>
-                                <div class="row justify-content-center">
-                                    <a id="checkout-button" class="btn btn-primary btn-block" style="width: 25%" href="">Acheter</a>
-                                </div>
-                            </div>
-                        </div>
-                        {#                        <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>#}
-                        {#                        4.0 stars#}
+                        <a href="" data-toggle="modal" data-target="#productModal">
+                            <img class="img-fluid" src="{{asset( 'uploads/images/article/')}}{{ article.image}}" />
+                            <p class="text-center">Zoom</p>
+                        </a>
                     </div>
                 </div>
-                <!-- /.card -->
-
-                {#                <div class="card card-outline-secondary my-4">#}
-                {#                    <div class="card-header">#}
-                {#                        Product Reviews#}
-                {#                    </div>#}
-                {#                    <div class="card-body">#}
-                {#                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>#}
-                {#                        <small class="text-muted">Posted by Anonymous on 3/1/17</small>#}
-                {#                        <hr>#}
-                {#                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>#}
-                {#                        <small class="text-muted">Posted by Anonymous on 3/1/17</small>#}
-                {#                        <hr>#}
-                {#                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>#}
-                {#                        <small class="text-muted">Posted by Anonymous on 3/1/17</small>#}
-                {#                        <hr>#}
-                {#                        <a href="#" class="btn btn-success">Leave a Review</a>#}
-                {#                    </div>#}
-                {#                </div>#}
-                <!-- /.card -->
-
             </div>
-            <!-- /.col-lg-9 -->
 
+            <!-- Add to cart -->
+            <div class="col-12 col-lg-6 add_to_cart_block">
+                <div class="card bg-light mb-3">
+                    <div class="card-header bg-primary text-white text-uppercase"><i class="fa fa-align-justify"></i> {{ article.title }}</div>
+                    <div class="card-body">
+                        <p class="price" id="price">Prix : {{article.price/100}} €</p>
+{#                        <p class="price_discounted">149.90 $</p>#}
+{#                        <form method="get" action="cart.html">#}
+{#                            <div class="form-group">#}
+{#                                <label for="colors">Color</label>#}
+{#                                <select class="custom-select" id="colors">#}
+{#                                    <option selected>Select</option>#}
+{#                                    <option value="1">Blue</option>#}
+{#                                    <option value="2">Red</option>#}
+{#                                    <option value="3">Green</option>#}
+{#                                </select>#}
+{#                            </div>#}
+                            <div class="form-group">
+                                <label>Quantité :</label>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <button type="button" class="quantity-left-minus btn btn-danger btn-number"  data-type="minus" data-field="">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <input type="text" class="form-control"  id="quantity" name="quantity" min="1" max="100" value="1">
+                                    <div class="input-group-append">
+                                        <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus" data-field="">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <a id="checkout-button" href="" class="btn btn-success btn-lg btn-block text-uppercase">
+                                <i class="fa fa-shopping-cart"></i> Acheter
+                            </a>
+{#                        </form>#}
+{#                        <div class="product_rassurance">#}
+{#                            <ul class="list-inline">#}
+{#                                <li class="list-inline-item"><i class="fa fa-truck fa-2x"></i><br/>Fast delivery</li>#}
+{#                                <li class="list-inline-item"><i class="fa fa-credit-card fa-2x"></i><br/>Secure payment</li>#}
+{#                                <li class="list-inline-item"><i class="fa fa-phone fa-2x"></i><br/>+33 1 22 54 65 60</li>#}
+{#                            </ul>#}
+{#                        </div>#}
+{#                        <div class="reviews_product p-3 mb-2 ">#}
+{#                            3 reviews#}
+{#                            <i class="fa fa-star"></i>#}
+{#                            <i class="fa fa-star"></i>#}
+{#                            <i class="fa fa-star"></i>#}
+{#                            <i class="fa fa-star"></i>#}
+{#                            <i class="fa fa-star"></i>#}
+{#                            (4/5)#}
+{#                            <a class="pull-right" href="#reviews">View all reviews</a>#}
+{#                        </div>#}
+{#                        <div class="datasheet p-3 mb-2 bg-info text-white">#}
+{#                            <a href="" class="text-white"><i class="fa fa-file-text"></i> Download DataSheet</a>#}
+{#                        </div>#}
+                    </div>
+                </div>
+                <div class="card bg-light mb-3">
+                    <div class="card-header bg-primary text-white text-uppercase"><i class="fa fa-align-justify"></i> Description</div>
+                    <div class="card-body">
+                        <p class="card-text">{{ article.content | raw }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-    </div>
-    <!-- /.container -->
-    <script type="text/javascript">
-        var checkoutButton = document.getElementById('checkout-button');
-        var amountValue = document.getElementById('amount');
-        checkoutButton.addEventListener('click', function (){
-            var url = '{{ path('checkout_getShippingAdresse', {'id': article.id, 'amount': "amount_value" })|escape('js') }}';
-            url = url.replace("amount_value",amountValue.value);
-            this.href = url;
+{#            <!-- Reviews -->#}
+{#            <div class="col-12" id="reviews">#}
+{#                <div class="card border-light mb-3">#}
+{#                    <div class="card-header bg-primary text-white text-uppercase"><i class="fa fa-comment"></i> Reviews</div>#}
+{#                    <div class="card-body">#}
+{#                        <div class="review">#}
+{#                            <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>#}
+{#                            <meta itemprop="datePublished" content="01-01-2016">January 01, 2018#}
 
-            return false;
-        })
+{#                            <span class="fa fa-star"></span>#}
+{#                            <span class="fa fa-star"></span>#}
+{#                            <span class="fa fa-star"></span>#}
+{#                            <span class="fa fa-star"></span>#}
+{#                            <span class="fa fa-star"></span>#}
+{#                            by Paul Smith#}
+{#                            <p class="blockquote">#}
+{#                            <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>#}
+{#                            </p>#}
+{#                            <hr>#}
+{#                        </div>#}
+{#                        <div class="review">#}
+{#                            <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>#}
+{#                            <meta itemprop="datePublished" content="01-01-2016">January 01, 2018#}
+
+{#                            <span class="fa fa-star" aria-hidden="true"></span>#}
+{#                            <span class="fa fa-star" aria-hidden="true"></span>#}
+{#                            <span class="fa fa-star" aria-hidden="true"></span>#}
+{#                            <span class="fa fa-star" aria-hidden="true"></span>#}
+{#                            <span class="fa fa-star" aria-hidden="true"></span>#}
+{#                            by Paul Smith#}
+{#                            <p class="blockquote">#}
+{#                            <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>#}
+{#                            </p>#}
+{#                            <hr>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+        </div>
+    </div>
+
+
+    <!-- Modal image -->
+    <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalLabel">{{ article.title }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img class="img-fluid" src="{{asset( 'uploads/images/article/')}}{{ article.image}}" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    var max = {{ article.amount }};
+
+    $('.quantity-right-plus').click(function(e){
+    e.preventDefault();
+    var quantity = parseInt($('#quantity').val());
+    if(quantity != max) {
+        $('#quantity').val(quantity + 1);
+        var price = {{ article.price }} * (quantity+1) / 100;
+        $('#price').text("Prix : " + price + " €");
+    }
+    {#$('#checkout-button').attr("href", "{{ path('base') }}");#}
+    });
+
+    $('.quantity-left-minus').click(function(e){
+    e.preventDefault();
+    var quantity = parseInt($('#quantity').val());
+    if(quantity > 1) {
+        $('#quantity').val(quantity - 1);
+        var price = {{ article.price }} *
+        (quantity - 1) / 100;
+        $('#price').text("Prix : " + price + " €");
+    }
+    });
+
+    $('#checkout-button').click(function (){
+        var quantity = parseInt($('#quantity').val());
+        var url = '{{ path('checkout_getShippingAdresse', {'id': article.id, 'amount': "quantity_value" })|escape('js') }}';
+        url = url.replace("quantity_value",quantity);
+        $('#checkout-button').attr("href", url);
+    });
     </script>
 {% endblock %}
 
