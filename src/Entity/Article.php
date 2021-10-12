@@ -77,6 +77,11 @@ class Article
         $this->commandes = new ArrayCollection();
     }
 
+    public function __toString(): ?string
+    {
+        return $this->getTitle();
+    }
+
     public function setImageFile($imageFile = null){
         $this->imageFile = $imageFile;
         if ($imageFile) {

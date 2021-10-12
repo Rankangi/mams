@@ -179,4 +179,12 @@ class Commande
 
         return $this;
     }
+
+    public function getFacturePath(){
+        return "user/download/" . $this->sessionId;
+    }
+
+    public function __toString(){
+        return $this->Facture;
+    }
 }

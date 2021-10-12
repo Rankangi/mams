@@ -53,6 +53,11 @@ class Adresse
      */
     private $lastName;
 
+    public function __toString(): string
+    {
+        return $this->street . " " . $this->city;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

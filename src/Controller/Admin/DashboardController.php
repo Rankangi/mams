@@ -31,7 +31,7 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('JoyCreation');
+            ->setTitle('<a href="/">JoyCreation');
     }
 
     public function configureMenuItems(): iterable
@@ -44,7 +44,7 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud('Articles', 'fa fa-tags', Article::class),
 
             MenuItem::section('Achats'),
-            MenuItem::linkToCrud('Clients', 'fa fa-tags', User::class),
+//            MenuItem::linkToCrud('Clients', 'fa fa-tags', User::class),
             MenuItem::linkToCrud('Commandes', 'fa fa-tags', Commande::class),
         ];
     }

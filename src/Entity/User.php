@@ -89,6 +89,11 @@ class User implements UserInterface
         $this->adresses = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return $this->firstName . " " . $this->lastName;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
