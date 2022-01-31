@@ -27,7 +27,7 @@ class ArticleCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        return [
+        $fields = [
             TextField::new('title')->setLabel('Titre'),
             AssociationField::new('category',"Catégorie"),
             TextEditorField::new('description')->hideOnIndex()->setLabel('Description'),
@@ -43,14 +43,24 @@ class ArticleCrudController extends AbstractCrudController
             })->setLabel('Quantité'),
             ImageField::new('imageFile')->setFormType(VichImageType::class)->hideOnIndex()->hideOnDetail(),
             ImageField::new('image')->setBasePath($this->getParameter('app.path.article_images'))->hideOnForm(),
-            CollectionField::new("images")
-                ->setEntryType(ImageType::class)
-                ->onlyOnForms(),
-            CollectionField::new("images")
-                ->setTemplatePath("images.html.twig")
-                ->onlyOnDetail(),
-            MoneyField::new('price')->setCurrency('EUR')->setLabel('Prix'),
         ];
+
+        if ($pageName == Crud::PAGE_NEW || $pageName == Crud::PAGE_EDIT){
+            $fields[] = CollectionField::new("images")
+                ->setEntryType(ImageType::class)
+                ->onlyOnForms();
+        }
+
+        if ($pageName == Crud::PAGE_DETAIL){
+            $fields[] = CollectionField::new("images")
+                ->setEntryType(ImageType::class)
+                ->onlyOnForms();
+        }
+
+        $fields[] = MoneyField::new('price')->setCurrency('EUR')->setLabel('Prix');
+
+        return $fields;
+
     }
 
     public function configureCrud(Crud $crud): Crud
