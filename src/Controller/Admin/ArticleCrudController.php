@@ -53,8 +53,8 @@ class ArticleCrudController extends AbstractCrudController
 
         if ($pageName == Crud::PAGE_DETAIL){
             $fields[] = CollectionField::new("images")
-                ->setEntryType(ImageType::class)
-                ->onlyOnForms();
+                ->setTemplatePath("images.html.twig")
+                ->onlyOnDetail();
         }
 
         $fields[] = MoneyField::new('price')->setCurrency('EUR')->setLabel('Prix');

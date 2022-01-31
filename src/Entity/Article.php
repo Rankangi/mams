@@ -160,7 +160,7 @@ class Article
         return $this->image;
     }
 
-    public function setImage( ?string $image): self
+    public function setImage(?string $image): self
     {
         $this->image = $image;
 
@@ -235,15 +235,18 @@ class Article
     }
 
     /**
-     * @return Collection|Image[]
+     * @return Collection|Image[]|null
      */
-    public function getImages(): Collection
+    public function getImages(): ?Collection
     {
         return $this->images;
     }
 
     public function addImage(Image $image): self
     {
+        if (!$this->image){
+            $this->images = new ArrayCollection();
+        }
         if (!$this->images->contains($image)) {
             $this->images[] = $image;
             $image->setArticle($this);
@@ -254,6 +257,9 @@ class Article
 
     public function removeImage(Image $image): self
     {
+        if (!$this->image){
+            $this->images = new ArrayCollection();
+        }
         if ($this->images->removeElement($image)) {
             // set the owning side to null (unless already changed)
             if ($image->getArticle() === $this) {
