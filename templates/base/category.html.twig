@@ -16,7 +16,8 @@
 
                 <div class="list-group">
                     {% for category in categories %}
-                        <a href="{{ path('category_show', {'id': category.id }) }}" class="list-group-item">{{ category.title }}</a>
+                        <a href="{{ path('category_show', {'id': category.id }) }}"
+                           class="list-group-item">{{ category.title }}</a>
                     {% endfor %}
                 </div>
 
@@ -52,30 +53,50 @@
                     </a>
                 </div>
 
+                <!-- Grid row -->
                 <div class="row">
                     {% for article in category.articles %}
                         {% if article.amount != 0 %}
-                            <div class="col-lg-4 col-md-6 mb-4">
-                                <div class="card h-100">
-                                    <a href="{{ path('article_show', {'id': article.id}) }}"><img class="card-img-top" src=" {{asset( 'uploads/images/article/')}}{{ article.image}}" alt=""></a>
-                                    <div class="card-body">
+                            <!-- Grid column -->
+                            <div class="col-lg-3 col-md-6 mb-lg-0 mb-4">
+                                <!-- Card -->
+                                <div class="card card-cascade narrower card-ecommerce">
+                                    <!-- Card image -->
+                                    <div class="view view-cascade overlay">
+                                        <a href="{{ path('article_show', {'id': article.id}) }}"><img src="{{ asset( 'uploads/images/article/') }}{{ article.image }}"
+                                             class="card-img-top"
+                                             alt="sample photo"></a>
+                                        <a>
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card image -->
+                                    <!-- Card content -->
+                                    <div class="card-body card-body-cascade text-center">
+                                        <!-- Title -->
                                         <h4 class="card-title">
-                                            <a href="{{ path('article_show', {'id': article.id }) }}">{{ article.title }}</a>
+                                            <strong>
+                                                <a href="{{ path('article_show', {'id': article.id }) }}">{{ article.title }}</a>
+                                            </strong>
                                         </h4>
+                                        <!-- Description -->
                                         <p class="card-text">{{ article.description | raw }}</p>
+                                        <!-- Card footer -->
+                                        <div class="card-footer px-1">
+                                            <span class="float-left font-weight-bold">
+                                              <strong>{{ article.price/100 }} €</strong>
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div class="card-footer">
-                                        <h5>{{ article.price/100 }} €</h5>
-                                        {#                                <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>#}
-                                    </div>
+                                    <!-- Card content -->
                                 </div>
+                                <!-- Card -->
                             </div>
+                            <!-- Grid column -->
                         {% endif %}
                     {% endfor %}
-
                 </div>
-                <!-- /.row -->
-
+                <!-- Grid row -->
             </div>
             <!-- /.col-lg-9 -->
 

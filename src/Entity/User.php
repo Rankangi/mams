@@ -87,6 +87,7 @@ class User implements UserInterface
     {
         $this->commandes = new ArrayCollection();
         $this->adresses = new ArrayCollection();
+        $this->prepareCommandes = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -335,5 +336,10 @@ class User implements UserInterface
         $this->defaultAddress = $defaultAddress;
 
         return $this;
+    }
+
+    public function getIsVerified(): ?bool
+    {
+        return $this->isVerified;
     }
 }

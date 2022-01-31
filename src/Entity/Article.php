@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Form\DefaultAdresseType;
 use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -72,9 +73,15 @@ class Article
      */
     private $commandes;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Image", mappedBy="article", cascade={"persist"})
+     */
+    private $images;
+
     public function __construct()
     {
         $this->commandes = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     public function __toString(): ?string
@@ -83,6 +90,7 @@ class Article
     }
 
     public function setImageFile($imageFile = null){
+
         $this->imageFile = $imageFile;
         if ($imageFile) {
             // if 'updatedAt' is not defined in your entity, use another property
@@ -220,6 +228,36 @@ class Article
             // set the owning side to null (unless already changed)
             if ($commande->getArticle() === $this) {
                 $commande->setArticle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Image[]
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(Image $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images[] = $image;
+            $image->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(Image $image): self
+    {
+        if ($this->images->removeElement($image)) {
+            // set the owning side to null (unless already changed)
+            if ($image->getArticle() === $this) {
+                $image->setArticle(null);
             }
         }
 

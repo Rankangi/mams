@@ -3,9 +3,12 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Article;
+use App\Form\ImageType;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -38,8 +41,14 @@ class ArticleCrudController extends AbstractCrudController
                     return $value;
                 }
             })->setLabel('Quantité'),
-            ImageField::new('imageFile')->setFormType(VichImageType::class)->hideOnIndex(),
+            ImageField::new('imageFile')->setFormType(VichImageType::class)->hideOnIndex()->hideOnDetail(),
             ImageField::new('image')->setBasePath($this->getParameter('app.path.article_images'))->hideOnForm(),
+            CollectionField::new("images")
+                ->setEntryType(ImageType::class)
+                ->onlyOnForms(),
+            CollectionField::new("images")
+                ->setTemplatePath("images.html.twig")
+                ->onlyOnDetail(),
             MoneyField::new('price')->setCurrency('EUR')->setLabel('Prix'),
         ];
     }
@@ -48,5 +57,10 @@ class ArticleCrudController extends AbstractCrudController
     {
         return $crud->setEntityLabelInSingular('Article')
             ->setEntityLabelInPlural('Articles');
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions->add(Crud::PAGE_INDEX, "detail");
     }
 }
